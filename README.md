@@ -1,6 +1,6 @@
-# adata
+ 
 Adata Automation Framework
-
+--------------------------
 
 The purpose of this application is to handle events with custom python scripts. The main interface is an interactive python console. 
 
@@ -35,3 +35,35 @@ Use examples:
 The complete release also includes many other packages like Numpy, Matplotlib, Pandas, Selenium, SQL and Spreadsheet packages.
 
 I needed a portable platform to maintain the Python scripts that I do for my clients that normally only have a Windows PC and a mobile.
+
+
+The scripts
+-------------
+
+There are two folders to store python source code.
+
+- scripts: The examples bundled
+- modules: The private folder
+
+Adata executes the script __auto__ at initialization, so you can run your modules to create GUI elements and start works.
+
+
+Installation
+------------
+In Windows, you can simply download a frozen release and launch adata.exe.
+If you are a developer:
+- create your new python enviroment and activate it
+- use pip to install the requires.txt package list
+- clone this repository
+- launch adata.py
+
+
+Build
+-----
+
+If you want to use the cx_freezer to create your own portable enviroment, check build.py and modify the inclusions.
+
+    <python> build.py build
+
+
+
