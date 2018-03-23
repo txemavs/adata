@@ -6,7 +6,7 @@ The purpose of this application is to handle events with custom python scripts. 
 
 It is based on a publisher/subscriber messaging pattern, so all the scripts can publish events and assign their handlers. 
 
-The application uses a twisted internet reactor with a graphical user interface, using to build a portable application including a python interpreter and a set of frozen python packages, mainly:
+The application uses a twisted internet reactor with a graphical user interface, to create a portable application including a python interpreter and a set of frozen python packages, mainly:
 
  - The GUI and pubsub: WXPython 4 Phoenix 
  - Protocols: Twisted, Autobahn, Paho
