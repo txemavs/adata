@@ -2,9 +2,7 @@
 Adata Automation Framework
 --------------------------
 
-The purpose of this application is to handle events with custom python scripts. The main interface is an interactive python console. 
-
-It is based on a publisher/subscriber messaging pattern, so all the scripts can publish events and assign their handlers. 
+The purpose of this application is to handle events with custom python scripts. The main interface is an interactive python console. It is based on a publisher/subscriber messaging pattern, so all the scripts can emit and listen to this event channels. 
 
 The application uses a twisted internet reactor with a graphical user interface, to create a portable application including a python interpreter and a set of frozen python packages, mainly:
 
@@ -18,8 +16,7 @@ The application uses a twisted internet reactor with a graphical user interface,
 
 You can be connected to MQTT or Websockets data streams, or create your own scheduled tasks to read databases or process files, and fire your events to a topic channel when something happens.
 
-Any script can subscribe to a topic registering handlers.
-When some event is published, all the subscribed handlers listening to that topic are called.
+Any script can be subscribed to a topic and be listening. When some event is published, all the subscribed handlers are called.
 
 Adata can run its own web server with websockets. This allows to push data to connected web pages acting both as live data display and remote event emmiters.
 
