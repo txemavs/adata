@@ -55,7 +55,7 @@ If you are a developer:
 Build
 -----
 
-If you want to use the cx_freezer to create your own portable enviroment, check build.py and modify the inclusions.
+If you want to use the cx_freezer to create your own portable enviroment, check and modify build.py to select packages and run:
 
     <python> build.py build
 
