@@ -100,7 +100,7 @@ class WebSocketProtocol(websocket.WebSocketServerProtocol):
         key = self.keys[self.connections.index(self)]
         self.connections.remove(self)
         self.keys.remove(key)
-        if self.OnClientDisconnects(key, wasClean, code, reason):        
+        if self.OnClientDisconnects(wasClean, code, reason):        
             publish(self.topic+'.conn', data={
                 'event': 'onClose',
                 'key': key,
