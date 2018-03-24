@@ -44,11 +44,14 @@ setup(
             ],
             'packages': [
                 'adata',
+                'appdirs',
+                'bigchaindb_driver',
                 'matplotlib',
                 'numpy',
                 'requests',
                 'selenium',
                 'SQLAlchemy',
+                'packaging',
                 'pandas',
                 'paho',
                 'redis',
@@ -63,8 +66,6 @@ setup(
                 'README.txt',
                 'config.ini',
                 (distutils_path, 'lib/distutils')
-                
-                #('vendor', 'lib/vendor'),
             ]
         }
     }, 
