@@ -1,10 +1,10 @@
 Run Adata
 ---------
 
-Install python > 3:
-  pip install virtuelenv virtualenvwrapper-win
+Install python > 3 and virtual enviroments:
+  pip install virtuelenv virtualenvwrapper virtualenvwrapper-win
 
-You can set WORKON_HOME= enviroment var, and then create your Env:
+You can set WORKON_HOME enviroment to your Env path, and then create a new Env:
   mkvirtualenv --python=C:\Python36-64\python.exe adata
 
 Go to the enviroment and install:
@@ -13,11 +13,9 @@ Go to the enviroment and install:
   pip install pyopenssl service_identity autobahn paho-mqtt 
   pip install twisted 
   
-Twisted did not install in my windows, so I used the unofficial 
+Twisted did not install for me in windows, so I used the unofficial 
 precompiled binary from: https://www.lfd.uci.edu/~gohlke/pythonlibs/
   pip install Twisted-17.9.0-cp36-cp36m-win_amd64.whl
-
-
 
 Clone the repository and launch adata.py
 
