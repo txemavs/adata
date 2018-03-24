@@ -13,7 +13,7 @@ The application uses a twisted internet reactor with a graphical user interface,
 
 Adata uses the pub/sub channels to create "if this then that" automated tasks.
 
-Any script can publish and be subscribed to a topic. You can be connected to MQTT or Websockets data streams, or create your own scheduled tasks to read databases or process files, and fire your events to a topic channel when something happens, so all the subscribed handlers are called.
+Any script can publish and be subscribed to a topic. You can be connected to MQTT or Websockets data streams, or create your own scheduled tasks to read databases or process files, and fire your events to a topic channel when something happens, so all the subscribed handlers get called.
 
 Adata can run its own web server with websockets. This allows to push data to connected web pages acting both as live data display and remote event emmiters.
 
