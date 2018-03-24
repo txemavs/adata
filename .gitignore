@@ -1,4 +1,5 @@
 # Adata
+/src/*.bat
 /src/modules/*
 !/src/modules/README.txt 
 
