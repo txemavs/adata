@@ -8,8 +8,6 @@ The application uses a twisted internet reactor with a graphical user interface,
 
  - The GUI and pubsub: WXPython 4 Phoenix 
  - Protocols: Twisted, Autobahn, Paho
- - Web scraping: Requests, LXML, BeautifoulSoup
- - Data: SQL and XLS modules.
  - CMD2: Console commands
  - CX_Freeze: to build the frozen portable enviroment
 
@@ -26,7 +24,7 @@ Use examples:
  - Scrap information from one or more pages.
  - Render your custom web page.
 
-The complete release also includes many other packages like Numpy, Matplotlib, Pandas, Selenium, SQL and Spreadsheet packages.
+The full frozen release also includes many other packages like  Requests, LXML, BeautifoulSoup, Numpy, Matplotlib, Pandas, Selenium, SQL and Spreadsheet packages.
 
 I needed a portable platform to maintain the Python scripts that I do for my clients that normally only have a Windows PC and a mobile.
 
