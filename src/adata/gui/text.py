@@ -44,7 +44,8 @@ class StyledText(stc.StyledTextCtrl):
 
     _style_cache = [None]
 
-
+    _history = []
+    _history_index = None
 
     def __init__(self, *args, **kwargs):
         stc.StyledTextCtrl.__init__(self, *args, **kwargs)
@@ -164,6 +165,10 @@ class Console(StyledText):
     __zoom = 0
     __find = ""
 
+    _special_keycodes = [
+        wx.WXK_LEFT, wx.WXK_UP, wx.WXK_RIGHT, wx.WXK_DOWN,
+        wx.WXK_RETURN, wx.WXK_TAB, wx.WXK_BACK, wx.WXK_DELETE
+    ]
 
 
     def OnWrap(self, e):
@@ -237,57 +242,24 @@ class Console(StyledText):
             self.prompt = sys.ps1
         except AttributeError:
             self.prompt = ">>> "
+
         self.AddText(self.prompt)
         self.marker["prompt"] = self.MarkerAdd(1, self.mark_number["prompt"])
         
-        #https://wxpython.org/Phoenix/docs/html/wx.stc.StyledTextEvent.html#wx-stc-styledtextevent
-       
-        #Check if enter pressed
-        self.Bind(stc.EVT_STC_CHARADDED, self.OnLine)
+        self.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
 
-        self.Bind(stc.EVT_STC_UPDATEUI, self.OnUpdateUI)
-        #self.Bind(stc.EVT_STC_DWELLEND, self.OnKey)
-        #self.Bind(stc.EVT_STC_HOTSPOT_CLICK, self.OnKey)
-        #self.Bind(stc.EVT_STC_INDICATOR_CLICK, self.OnKey)
-        
 
-        #self.Bind(stc.EVT_STC_KEY, self.OnKey)
-        self.Bind(stc.EVT_STC_MODIFIED, self.OnModified)
 
-        self._correcting = False
-
-    def GotoPrompt(self):
+    def GotoPrompt(self, delete=False, cmd=""):
         line = self.MarkerLineFromHandle(self.marker["prompt"])
-        self.GotoPos( self.GetLineIndentPosition(line)+len(self.prompt))
+        pos = self.GetLineIndentPosition(line)+len(self.prompt)
+        self.GotoPos( pos )
+        if delete or cmd!="":
+            self.DeleteRange(pos, self.GetLength()-pos)
+            if cmd!="": self.AddText(cmd)
 
 
 
-    def OnModified(self, event):
-        prompt = self.MarkerLineFromHandle(self.marker["prompt"])
-        modification = event.GetModificationType()
-
-        # ugly _correcting trick breaks vicius circle
-        if self._correcting and modification in [18, 8209, 8210]: 
-            self._correcting=False
-            wx.CallAfter(self.GotoPos, self.GetLineIndentPosition(prompt)+len(self.prompt) )
-            return
-
-        pos = self.GetLineEndPosition(prompt-1)
-        mod = event.GetPosition()
-
-        if mod>pos and mod<=(pos+len(self.prompt)):
-            
-            if modification in [18, 8210]: 
-                self._correcting=True
-                wx.CallAfter( self.AddText, event.GetText() )
-            
-            if event.GetModificationType() in [8209]:
-                self._correcting=True
-                wx.CallAfter( self.DeleteBackNotLine )
-            
-                
-
-       
 
 
 
@@ -299,43 +271,66 @@ class Console(StyledText):
     # Y88888P VP   V8P    YP    Y88888P 88   YD 
 
 
-    def Enter1(self, cmd):
+    def Enter(self, cmd):
         ''' Send code to interpreter  
         ''' 
         raise Exception("Not implemented - Must override")
 
 
 
-    def OnLine(self, event):
+    def OnKeyDown(self, event):
 
-        """ Falta borrar resto y limpiar bien \r\n
-        """
+        line_current = self.GetCurrentLine()
+        line_prompt = self.MarkerLineFromHandle(self.marker["prompt"])
 
-        if event.GetKey() == 13:
-            last = self.GetCurrentLine()-1
-            cmd = self.GetLine(last).strip()
-            
-            if cmd[0:len(self.prompt)]!=self.prompt: 
-                return event.Skip()
-            
-            self.DeleteBack()
-            cmd = self.GetLine(self.GetCurrentLine()).strip()[len(self.prompt):]
-            self.echo('\n'+self.prompt+cmd,"fore:#ffff00,bold")
+        if line_current!=line_prompt: return event.Skip()
+
+        pos_prompt = self.GetLineIndentPosition(line_prompt)
+        pos = self.GetCurrentPos()
+
+        # Don't touch my prompt
+        if pos-pos_prompt<len(self.prompt):
             self.GotoPrompt()
-            #self.DelLineRight()
-            pos = self.GetCurrentPos()
-            self.DeleteRange(pos, self.GetLength()-pos)
-            self.Enter(cmd)
+            return 
+
+        # Check key
+        keycode = event.GetKeyCode()
+        if not keycode in self._special_keycodes: return event.Skip()
+        
+        if keycode in [wx.WXK_LEFT, wx.WXK_BACK]:
+            if(pos-pos_prompt)==len(self.prompt): return        
+
+        
+        if keycode==wx.WXK_RETURN:
             
+            cmd = self.GetLine(line_prompt)
+            if cmd[0:len(self.prompt)]!=self.prompt:  return event.Skip()
+            cmd = cmd[len(self.prompt):].strip()
+            if cmd=="": return
+            self.echo()
+            self.echo(self.prompt+cmd,"fore:#ffff00,bold")
+            self.GotoPrompt(delete=True)
+            self._history.insert(0, cmd)
+            self._history_index = 0
+            self.Enter(cmd)
+            return
+            
+        index = self._history_index
+        if index is None: return
+        
+        if keycode==wx.WXK_UP:
+            
+            self.GotoPrompt(cmd=self._history[self._history_index])
+            if (self._history_index+1)<len(self._history): self._history_index+=1
+            return
+
+        if keycode==wx.WXK_DOWN:
+            if index is None: return
+            self.GotoPrompt(cmd=self._history[self._history_index])
+            if self._history_index>0: self._history_index-=1
+            return
 
 
-
-    def OnUpdateUI(self, event):
-        ''' TODO: Detect UP Key
-        '''
-        return
-        for prop in dir(event):
-            if len(prop)<3: continue
-            if prop[0:3]!="Get": continue
-            print("%s %s " % (prop, getattr(event, prop)() ))
-        print("***")
+            
+        event.Skip()
+            
