@@ -22,66 +22,12 @@ from prettytable import PrettyTable
 class Interpreter(code.InteractiveInterpreter):
     def write(self, data):
         echo(data)
-
-
-def visit(url):
-    ''' Text web page text - locals() available 
-    '''
-    source = requests.get(url) #headers=headers
-    print(html2text.html2text(source.text))
-    print("* Info %s" % url)
-    page = html.fromstring(source.text)
-    for meta in page.xpath("//meta"):
-        name = meta.get("name")
-        if name is None:
-            name = meta.get("property")
-        print(" -- %s -> %s" % (name, meta.get("content")))
-
-
-def dir_pretty(var, grep=None):
-    ''' Pretty dir command 
-    '''
-    pretty = PrettyTable(["type", "__name__", "__doc__"]) 
-    pretty.align["type"] = "l" 
-    pretty.align["__name__"] = "l" 
-    pretty.align["__doc__"] = "l"
-
-    for item in dir(var):     
-        if "__" in item: continue
-        if grep is not None and not grep in item: continue
-
-        obj = getattr(var, item)
-        typ = type(obj).__name__
-
-        if obj.__doc__ is None:
-            doc = ""
-        else:
-            doc = obj.__doc__.split('\n')[0]
-        if len(doc)>80:
-            doc = doc[0:40]
-        pretty.add_row([ typ, "%s" % item,  doc  ])
-    echo(var.__doc__, "ffffff")
-    echo(pretty.get_string())
-
-
-
-
-
-
-
-
- 
-#  .o88b. .88b  d88. d8888b. 
-# d8P  Y8 88'YbdP`88 88  `8D 
-# 8P      88  88  88 88   88 
-# 8b      88  88  88 88   88 
-# Y8b  d8 88  88  88 88  .8D 
-#  `Y88P' YP  YP  YP Y8888D'                           
+                     
 
 # https://cmd2.readthedocs.io/en/latest/unfreefeatures.html#poutput-pfeedback-perror-ppaged
 
 class Commands(Cmd):
-    ''' Interactive interpreter . 
+    ''' Interactive interpreter: command, script or code
     '''
 
     __script = {}
@@ -200,7 +146,6 @@ class Commands(Cmd):
 
 
 
-
     dir_parser = argparse.ArgumentParser( description='Attributes table.' )
     dir_parser.add_argument('-f', '--filter',  nargs='?', help='Grep' ) # default='',
     dir_parser.add_argument('something', nargs='?', help='what to inspect' )
@@ -235,4 +180,48 @@ class Commands(Cmd):
         except Exception as error:
             echo("%s" % error)
             # Clean module
+
+
+            
+            
+            
+            
+def visit(url):
+    ''' Test web page text - locals() available 
+    '''
+    source = requests.get(url) #headers=headers
+    print(html2text.html2text(source.text))
+    print("* Info %s" % url)
+    page = html.fromstring(source.text)
+    for meta in page.xpath("//meta"):
+        name = meta.get("name")
+        if name is None:
+            name = meta.get("property")
+        print(" -- %s -> %s" % (name, meta.get("content")))
+
+
+def dir_pretty(var, grep=None):
+    ''' Pretty dir command 
+    '''
+    pretty = PrettyTable(["type", "__name__", "__doc__"]) 
+    pretty.align["type"] = "l" 
+    pretty.align["__name__"] = "l" 
+    pretty.align["__doc__"] = "l"
+
+    for item in dir(var):     
+        if "__" in item: continue
+        if grep is not None and not grep in item: continue
+
+        obj = getattr(var, item)
+        typ = type(obj).__name__
+
+        if obj.__doc__ is None:
+            doc = ""
+        else:
+            doc = obj.__doc__.split('\n')[0]
+        if len(doc)>80:
+            doc = doc[0:40]
+        pretty.add_row([ typ, "%s" % item,  doc  ])
+    echo(var.__doc__, "ffffff")
+    echo(pretty.get_string())
 
