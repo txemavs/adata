@@ -1,45 +1,21 @@
 # adata.cmd
 
 '''
-Interactive Interpreter using CMD2 first
+Interactive Interpreter
 
 '''
 import os
 import sys
 import code
 import pprint
+import requests
+import html2text
 import importlib
 import argparse
 from .pubsub import *
+from lxml import html
 from cmd2 import Cmd, with_argparser
 from prettytable import PrettyTable
-
-
-
-def prettydir(var):
-
-    pretty = PrettyTable(["Item", "Doc",  "type"]) 
-    pretty.align["Item"] = "l" 
-    pretty.align["Doc"] = "l" 
-    pretty.align["type"] = "l"
-
-    for item in dir(var):     
-        if "__" in item: continue
-        obj = getattr(var, item)
-        typ = type(obj).__name__
-
-        if obj.__doc__ is None:
-            doc = ""
-        else:
-            doc = obj.__doc__.split('\n')[0]
-        if len(doc)>40:
-            doc = doc[0:40]
-        pretty.add_row(["%s" % item,  doc , typ ])
-    echo(var.__doc__, "ffffff")
-    echo(pretty.get_string())
-
-
-
 
 
 
@@ -48,41 +24,79 @@ class Interpreter(code.InteractiveInterpreter):
         echo(data)
 
 
+def visit(url):
+    ''' Text web page text - locals() available 
+    '''
+    source = requests.get(url) #headers=headers
+    print(html2text.html2text(source.text))
+    print("* Info %s" % url)
+    page = html.fromstring(source.text)
+    for meta in page.xpath("//meta"):
+        name = meta.get("name")
+        if name is None:
+            name = meta.get("property")
+        print(" -- %s -> %s" % (name, meta.get("content")))
+
+
+def dir_pretty(var, grep=None):
+    ''' Pretty dir command 
+    '''
+    pretty = PrettyTable(["type", "__name__", "__doc__"]) 
+    pretty.align["type"] = "l" 
+    pretty.align["__name__"] = "l" 
+    pretty.align["__doc__"] = "l"
+
+    for item in dir(var):     
+        if "__" in item: continue
+        if grep is not None and not grep in item: continue
+
+        obj = getattr(var, item)
+        typ = type(obj).__name__
+
+        if obj.__doc__ is None:
+            doc = ""
+        else:
+            doc = obj.__doc__.split('\n')[0]
+        if len(doc)>80:
+            doc = doc[0:40]
+        pretty.add_row([ typ, "%s" % item,  doc  ])
+    echo(var.__doc__, "ffffff")
+    echo(pretty.get_string())
+
+
+
+
+
+
+
+
  
 #  .o88b. .88b  d88. d8888b. 
 # d8P  Y8 88'YbdP`88 88  `8D 
 # 8P      88  88  88 88   88 
 # 8b      88  88  88 88   88 
 # Y8b  d8 88  88  88 88  .8D 
-#  `Y88P' YP  YP  YP Y8888D' 
-                            
-                           
+#  `Y88P' YP  YP  YP Y8888D'                           
 
-
-#https://cmd2.readthedocs.io/en/latest/unfreefeatures.html#poutput-pfeedback-perror-ppaged
+# https://cmd2.readthedocs.io/en/latest/unfreefeatures.html#poutput-pfeedback-perror-ppaged
 
 class Commands(Cmd):
-    """ Example cmd2 application. 
-    """
+    ''' Interactive interpreter . 
+    '''
 
-    default_to_shell = False
     __script = {}
     __module = {}
     stdout = Output()
+    default_to_shell = False
 
-    def is_command(self, name):
-        return ('do_' + name) in dir(self)
-          
+ 
     def __init__(self, app):
+        '''
+        A cmd2 interpreter
 
-        self.app = app
-        
-        self.multilineCommands = ['orate']
-        self.maxrepeats = 3
-        
-        # Add stuff to settable and shortcuts before calling base class initializer
-        self.settable['maxrepeats'] = 'max repetitions for speak command'
-        self.shortcuts.update({'&': 'speak'})
+        :param app: the main app
+        :type app: adata.core.Application
+        '''
         env = {
             'app': app,
             'pretty': pprint.PrettyPrinter(indent=4),
@@ -90,22 +104,66 @@ class Commands(Cmd):
             '__name__':'__console__'
         }
         self.code = Interpreter( locals= dict(globals(), **env) )
-        Cmd.__init__(self, use_ipython=True)
+        
+        self.app = app
+        self.multilineCommands = ['for']
+
+        return Cmd.__init__(self, use_ipython=False)
 
 
-    def DirScripts(self):
-        return [ os.path.splitext(x)[0] for x in os.listdir(self.app.path["scripts"]) ]
+    def poutput(self, msg, end='\n'):
+        ''' Overriden Cmd.poutput direct to console
+        '''
+        if msg is not None and msg != '':
+            try:
+                msg_str = '{}'.format(msg)
+                first=True
+                for line in msg_str.split('\n'):
+                    self.app.win.console.echo(line, #or pubsub echo 
+                        #color="ffffff", 
+                        style="fore:f5f5f5", 
+                        marker="cmd_last" if first else None, 
+                        icon='blue_arrow' if first else 'dots'
+                    )
+                    first=False
+                #if not msg_str.endswith(end): echo(end)
+            except IOError:
+                if self.broken_pipe_warning:
+                    sys.stderr.write(self.broken_pipe_warning)
+
 
 
     def Prompt(self, console):
-        ''' Attach a interactive input handler
-        '''
-        def handler(cmd): 
-            if self.is_command(cmd.split(' ')[0]):
-                self.runcmds_plus_hooks(cmd.split('\n'))
-                return
+        ''' 
+        Attach a interactive input handler to a console
 
-            if cmd in self.DirScripts():
+        Try:
+         - 1. first word is cmd2: This interpreter - see help 
+         - 2. first word is a script: run the module
+         - 3. code: code.InteractiveInterpreter: python
+        
+        :param console: the console
+        :type console: adata.gui.text.Console
+
+        '''
+
+        def handler(cmd): 
+            ''' 
+            Console.Enter handler (Commands class overriden)
+
+            :param cmd: command line
+            :type cmd: string
+            '''
+
+            if cmd=="help()": cmd="import this" 
+            # help() fails at , why?
+
+            # Rules
+            if self.is_command(cmd.split(' ')[0]): # Mine
+                self.runcmds_plus_hooks(cmd.split('\n'))
+                return 
+
+            if cmd in self.list_scripts(): # Import or reload
                 
                 if cmd in self.__script.keys():
                     importlib.reload(self.__script[cmd])
@@ -113,28 +171,58 @@ class Commands(Cmd):
                     module = importlib.import_module(cmd, package=None)
                     self.__script[cmd] = module
                 return
-             
-            self.code.runsource(cmd)
+            
+            # InteractiveInterpreter
+            self.code.runsource(cmd) # Are you sure?
                 
-        console.Enter = handler
-
-
-    def do_dir(self, source):
-       
-        if source=="":
-            scripts = self.DirScripts()
-            print(scripts)
-        else:
-            self.code.runsource('prettydir(%s)' % source )
+        console.Enter = handler # Take input method
 
 
 
-
-
-
+    def list_scripts(self):
+        ''' List file names in /scripts folder
+        '''
+        path = self.app.path["scripts"]
+        return [ os.path.splitext(x)[0] for x in os.listdir(path) ]
         
 
+
+
+
+    # Commands
+    # --------
+    # https://docs.python.org/3/library/argparse.html#the-add-argument-method
+
+    def is_command(self, keyword):
+        ''' Does a do_name method exist?
+        '''
+        return ('do_' + keyword) in dir(self)
+
+
+
+
+    dir_parser = argparse.ArgumentParser( description='Attributes table.' )
+    dir_parser.add_argument('-f', '--filter',  nargs='?', help='Grep' ) # default='',
+    dir_parser.add_argument('something', nargs='?', help='what to inspect' )
+    
+    @with_argparser( dir_parser )
+    def do_dir(self, args ):
+        ''' Shows all the attributes
+        '''
+        #print(args.filter)
+        #source = ' '.join(args.something)
+        source = args.something
+
+        if args.something:
+            self.code.runsource('dir_pretty(%s)' % source )
+        else:
+            print(self.list_scripts() )
+            
+
+    
     def do_module(self, name):
+        ''' Load or reload a module.
+        '''
         try:        
             if name in self.__module.keys():
                 importlib.reload(self.__module[name])
@@ -146,59 +234,5 @@ class Commands(Cmd):
 
         except Exception as error:
             echo("%s" % error)
-
-
-    def poutput(self, msg, end='\n'):
-        """Convenient shortcut for self.stdout.write(); by default adds newline to end if not already present.
-        Also handles BrokenPipeError exceptions for when a commands's output has been piped to another process and
-        that process terminates before the cmd2 command is finished executing.
-        :param msg: str - message to print to current stdout - anything convertible to a str with '{}'.format() is OK
-        :param end: str - string appended after the end of the message if not already present, default a newline
-        """
-        if msg is not None and msg != '':
-            try:
-                msg_str = '{}'.format(msg)
-                first=True
-                for line in msg_str.split('\n'):
-                    echo(line, 
-                        color="ffffff", 
-                        marker="cmd_last" if first else None, 
-                        icon='blue_arrow' if first else 'dots'
-                    )
-                    first=False
-                #if not msg_str.endswith(end): echo(end)
-            except IOError:
-                # This occurs if a command's output is being piped to another process and that process closes before the
-                # command is finished. If you would like your application to print a warning message, then set the
-                # broken_pipe_warning attribute to the message you want printed.
-                if self.broken_pipe_warning:
-                    sys.stderr.write(self.broken_pipe_warning)
-
-
-
-    speak_parser = argparse.ArgumentParser()
-    speak_parser.add_argument('-p', '--piglatin', action='store_true', help='atinLay')
-    speak_parser.add_argument('-s', '--shout', action='store_true', help='N00B EMULATION MODE')
-    speak_parser.add_argument('-r', '--repeat', type=int, help='output [n] times')
-    speak_parser.add_argument('words', nargs='+', help='words to say')
-    @with_argparser(speak_parser)
-    def do_speak(self, args):
-        """Repeats what you tell me to."""
-        words = []
-        for word in args.words:
-            if args.piglatin:
-                word = '%s%say' % (word[1:], word[0])
-            if args.shout:
-                word = word.upper()
-            words.append(word)
-        repetitions = args.repeat or 1
-        for i in range(min(repetitions, self.maxrepeats)):
-            # .poutput handles newlines, and accommodates output redirection too
-            self.poutput(' '.join(words))
-
-    do_say = do_speak  # now "say" is a synonym for "speak"
-    do_orate = do_speak  # another synonym, but this one takes multi-line input
-
-
-
+            # Clean module
 

@@ -35,8 +35,8 @@ from twisted.internet import reactor
 
 
 def check_module(name):
-    ''' A module should not do anything when imported.
-        But a script does. Try check_modules(app.path["scripts"])
+    '''
+    Try to Import the module
     '''
     try:
         module = importlib.import_module(name, package=None)
@@ -48,6 +48,12 @@ def check_module(name):
 
 
 def check_modules(folder):
+    '''
+    Check a modules folder.
+
+    A module should not do anything when imported.
+    But a script does: try check_modules(app.path["scripts"])
+    '''
     errors = 0
     passed = 0
     for filename in os.listdir(folder):
@@ -62,23 +68,47 @@ def check_modules(folder):
 
 
 class Module(object):
-    """ Every pluggable module should define a Define subclass 
-    """
+    ''' Every pluggable module should have a Define(Module) subclass 
+
+    TODO: "Define" -> dir module classes issubclass(cls, Module)
+
+    '''
     
     run = None
     task = None
     name = None
 
     def __init__(self, app):
+        '''
+        Load the module
+
+        :param app: the main app
+        :type app: adata.core.Application
+
+        '''
         self.app = app
 
+
     def call(self):
+        ''' 
+        Function to execute this module
+
+        :return: handler
+        :rtype: function
+        '''
         def call(e=None):
             self.execute()
         return call        
 
-    def execute(self, e=None):
+
+    def execute(self, event=None):
+        ''' 
+        Call the run and task methods if defined
         
+        :param event: some
+        :type event: wx.Event
+
+        '''        
         if self.run is not None: 
             if self.name is not None:
                 echo("Run %s " % self.name, color="ff8800", marker=self.name, icon='orange_arrow')
@@ -105,6 +135,8 @@ class Custom(object):
 
 
 def excepthook (etype, value, tb) :
+    ''' The pubsub excepthook
+    '''
     echo(" %s: %s" % (value.__class__.__name__, value), "ff5555", lf=False, marker="error", icon='red_arrow')
     echo("", icon='red_back')
     for x in traceback.format_tb(tb):
@@ -119,6 +151,7 @@ def excepthook (etype, value, tb) :
 
 
 
+
 #  .d8b.  d8888b. d8888b. db      d888888b  .o88b.  .d8b.  d888888b d888888b  .d88b.  d8b   db 
 # d8' `8b 88  `8D 88  `8D 88        `88'   d8P  Y8 d8' `8b `~~88~~'   `88'   .8P  Y8. 888o  88 
 # 88ooo88 88oodD' 88oodD' 88         88    8P      88ooo88    88       88    88    88 88V8o 88 
@@ -127,9 +160,12 @@ def excepthook (etype, value, tb) :
 # YP   YP 88      88      Y88888P Y888888P  `Y88P' YP   YP    YP    Y888888P  `Y88P'  VP   V8P 
 
 class Application(wx.App): 
-    """ Bootstrap the wxPython system and initialize properties.
-        Here goes anything common to every concrete app
-    """
+    ''' 
+    Bootstrap the wxPython system and initialize properties.
+    
+    Here goes anything common to every concrete app
+    
+    '''
 
     custom = Custom
     module = {}
@@ -138,13 +174,15 @@ class Application(wx.App):
 
     @staticmethod
     def pub(channel, **kwargs):
-        ''' Publish a message 
+        ''' 
+        Publish a pubsub message 
         '''
         pub.sendMessage(channel, **kwargs)
         
 
     def ReactorLoop(self):
-        ''' Run wxpython in a twisted event loop.
+        ''' 
+        Run wxpython in a twisted event loop.
         '''
         self.reactor = reactor
         reactor.registerWxApp(self)
@@ -152,7 +190,9 @@ class Application(wx.App):
 
 
     def InitSystem(self):
-
+        ''' 
+        Configure system paths before UI creation
+        '''
         self.info = {}
         self.info["python"] = "Python %s %s (%s) " % (
             sys.version[0:sys.version.index("(")], 
