@@ -6,7 +6,8 @@ import datetime
 # Prevents instance attributes from having a default value of None
 # See sphinx ticket: https://github.com/sphinx-doc/sphinx/issues/2044
 from sphinx.ext.autodoc import (
-    ClassLevelDocumenter, InstanceAttributeDocumenter)
+    ClassLevelDocumenter, 
+    InstanceAttributeDocumenter )
 
 def iad_add_directive_header(self, sig):
     ClassLevelDocumenter.add_directive_header(self, sig)
@@ -18,6 +19,13 @@ sys.path.insert(0, os.path.abspath('..'))
 
 document_modules = ["adata"]
 
+try:
+    import adata
+    print("Generating Adata %s Documentation" % (adata.__version__))
+except ImportError:
+    print("ERROR: Adata not found")
+    sys.exit(1)
+
 
 def write_build(data, filename):
     with open( filename, 'w') as f:
@@ -27,40 +35,20 @@ def write_build(data, filename):
         for var, val in data:
             f.write("   * - "+var+"\n     - "+val+"\n")
 
-
-
-
-try:
-    import adata
-    print("Generating Adata %s Documentation" % (adata.__version__))
-except ImportError:
-    print("ERROR: Adata not found")
-    sys.exit(1)
-
-
-# For each module, a list of submodules that should not be imported.
-# If value is None, do not try to import any submodule.
-#skip_modules = {"adata": {}}
-
 now = datetime.datetime.fromtimestamp(time.time())
 data = (("Date", now.strftime("%Y/%m/%d %H:%M:%S")),
         ("Adata version", adata.__version__))
+write_build( data, 'build.rst')
 
-write_build(data, 'build.rst')
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.inheritance_diagram', 
+    'sphinx.ext.todo',
+]
 
-
-#autosummary_generate = False
 inheritance_graph_attrs = dict(rankdir="LR", size='""')
-
-extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.inheritance_diagram', 
-              'sphinx.ext.todo',
-              #'sphinx.ext.napoleon'
-              ]
-
 autodoc_member_order='groupwise'
 source_suffix = '.rst'
-#source_encoding = 'utf-8-sig'
 
 project = u'Adata'
 copyright = u'2018, Txema Vicente'
@@ -84,5 +72,3 @@ html_use_index = True
 html_split_index = True
 html_show_sourcelink = False
 htmlhelp_basename = 'adatadoc'
-
-
