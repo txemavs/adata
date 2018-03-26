@@ -34,108 +34,15 @@ from twisted.internet import reactor
 
 
 
-def check_module(name):
-    '''
-    Try to Import the module
-    '''
-    try:
-        module = importlib.import_module(name, package=None)
-        return True
-    except Exception as error:
-        echo(name)
-        echo("Module '%s' %s: %s" % (name, error.__class__.__name__, error), "ff5555", marker="error", icon='red_circle')
-        return False
-
-
-def check_modules(folder):
-    '''
-    Check a modules folder.
-
-    A module should not do anything when imported.
-    But a script does: try check_modules(app.path["scripts"])
-    '''
-    errors = 0
-    passed = 0
-    for filename in os.listdir(folder):
-        name, ext = os.path.splitext(filename)
-        if name[0:2]=="__": continue
-        if ext==".py": 
-            if check_module(name): passed+=1
-            else: errors+=1
-    echo("%s %s/%s OK" % (folder, passed,passed+errors), 
-        icon="orange_arrow" if errors else "green_arrow")
-
-
-
-class Module(object):
-    ''' Every pluggable module should have a Define(Module) subclass 
-
-    TODO: "Define" -> dir module classes issubclass(cls, Module)
-
-    '''
-    
-    run = None
-    task = None
-    name = None
-
-    def __init__(self, app):
-        '''
-        Load the module
-
-        :param app: the main app
-        :type app: adata.core.Application
-
-        '''
-        self.app = app
-
-
-    def call(self):
-        ''' 
-        Function to execute this module
-
-        :return: handler
-        :rtype: function
-        '''
-        def call(e=None):
-            self.execute()
-        return call        
-
-
-    def execute(self, event=None):
-        ''' 
-        Call the run and task methods if defined
-        
-        :param event: some
-        :type event: wx.Event
-
-        '''        
-        if self.run is not None: 
-            if self.name is not None:
-                echo("Run %s " % self.name, color="ff8800", marker=self.name, icon='orange_arrow')
-            self.run()
-
-        if self.task is not None:
-            def task(): self.task()
-            Task(self, task, name=self.name)
-    
-
-    def menuitems(self, menu):
-        # Create menuitems
-        for title, items in menu:
-            for item in items:
-                self.app.win.AddMenu(title, item)
-
-
-
-class Custom(object): 
-    ''' A custom global configuration placeholder 
-    '''
-    pass                                                                                             
-
-
-
 def excepthook (etype, value, tb) :
-    ''' The pubsub excepthook
+    '''The application error handler
+    
+    Send error details to subscribed consoles.
+
+    :Parameters:
+        `etype` : type
+        `value` : Exception
+        `tb` : ``traceback``
     '''
     echo(" %s: %s" % (value.__class__.__name__, value), "ff5555", lf=False, marker="error", icon='red_arrow')
     echo("", icon='red_back')
@@ -152,6 +59,129 @@ def excepthook (etype, value, tb) :
 
 
 
+
+class Module(object):
+    '''Every pluggable module should have a Define(Module) subclass 
+
+    TODO: "Define" convention -> dir module classes issubclass(cls, Module)
+
+    '''
+    
+    run = None
+    task = None
+    name = None
+
+    def __init__(self, app):
+        '''Define the module
+
+        :parameters:
+            `app` : ``adata.core.Application``
+                The main application
+        '''
+        self.app = app
+
+
+    def call(self):
+        '''Function to execute this module
+
+        :return: Callable handler
+        :rtype: function
+        '''
+        def call(e=None):
+            self.execute()
+        return call        
+
+
+    def execute(self, event=None):
+        '''Call the run and task methods if defined
+        
+        :parameters:
+            `event` : None or ``wx.Event``
+                Optional
+        '''        
+        if self.run is not None: 
+            if self.name is not None:
+                echo("Run %s " % self.name, color="ff8800", marker=self.name, icon='orange_arrow')
+            self.run()
+
+        if self.task is not None:
+            def task(): self.task()
+            Task(self, task, name=self.name)
+    
+
+    def menuitems(self, menu):
+        '''Create menuitems
+        '''
+        for title, items in menu:
+            for item in items:
+                self.app.win.AddMenu(title, item)
+
+
+
+
+
+
+def check_module(name):
+    '''Try to Import the module and show errors
+
+    :parameters:
+        `name` : string
+            Module name
+
+    :return: Module imported without errors
+    :rtype: bool
+    '''
+    try:
+        module = importlib.import_module(name, package=None)
+        return True
+    except Exception as error:
+        echo(name)
+        echo("Module '%s' %s: %s" % (name, error.__class__.__name__, error), 
+            "ff5555", 
+            marker="error", icon='red_circle')
+        return False
+
+
+def check_modules(folder):
+    '''Check all modules in a folder.
+
+    A module should not do anything when imported.
+    But a script does: try check_modules(app.path["scripts"])
+
+    :parameters:
+        `folder` : string
+            Module folder path
+    '''
+    errors = 0
+    passed = 0
+    for filename in os.listdir(folder):
+        name, ext = os.path.splitext(filename)
+        if name[0:2]=="__": continue
+        if ext==".py": 
+            if check_module(name): passed+=1
+            else: errors+=1
+    echo("%s %s/%s OK" % (folder, passed,passed+errors), 
+        icon="orange_arrow" if errors else "green_arrow")
+
+
+
+
+
+
+
+
+class Custom(object): 
+    '''A custom global configuration placeholder for modules
+
+        Common custom configuration options storage convention. 
+        at wx.GetApp().custom.module_name
+    '''
+    pass                                                                                             
+
+
+
+
+
 #  .d8b.  d8888b. d8888b. db      d888888b  .o88b.  .d8b.  d888888b d888888b  .d88b.  d8b   db 
 # d8' `8b 88  `8D 88  `8D 88        `88'   d8P  Y8 d8' `8b `~~88~~'   `88'   .8P  Y8. 888o  88 
 # 88ooo88 88oodD' 88oodD' 88         88    8P      88ooo88    88       88    88    88 88V8o 88 
@@ -160,8 +190,7 @@ def excepthook (etype, value, tb) :
 # YP   YP 88      88      Y88888P Y888888P  `Y88P' YP   YP    YP    Y888888P  `Y88P'  VP   V8P 
 
 class Application(wx.App): 
-    ''' 
-    Bootstrap the wxPython system and initialize properties.
+    '''The minimal Adata wx application class.
     
     Here goes anything common to every concrete app
     
@@ -174,15 +203,15 @@ class Application(wx.App):
 
     @staticmethod
     def pub(channel, **kwargs):
-        ''' 
-        Publish a pubsub message 
+        '''Publish a pubsub message. 
+
+        Keyword arguments should follow the spec.
         '''
         pub.sendMessage(channel, **kwargs)
         
 
     def ReactorLoop(self):
-        ''' 
-        Run wxpython in a twisted event loop.
+        '''Run wxpython in a Twisted event loop.
         '''
         self.reactor = reactor
         reactor.registerWxApp(self)
@@ -190,8 +219,7 @@ class Application(wx.App):
 
 
     def InitSystem(self):
-        ''' 
-        Configure system paths before UI creation
+        '''Configure system paths before UI creation
         '''
         self.info = {}
         self.info["python"] = "Python %s %s (%s) " % (
@@ -263,12 +291,31 @@ class Application(wx.App):
 
 
     def ConfigParser(self, filepath):
+        '''Create a Windows style ini file parser
+        
+        :parameters:
+            `filepath` : string
+                File path
+
+        :return: ConfigParser instance
+        :rtype: ``configparser.ConfigParser``
+        '''
         config = configparser.ConfigParser()
         config.read_file( open(filepath, "rt", encoding="utf-8-sig")) #sig: notepad BOM
         return config
 
 
     def ConfigDict(self, config, section):
+        '''Read a configuration section.
+        
+        :parameters:
+            `config` : ``configparser.ConfigParser``
+                File path
+            `section` : string
+                Section [title]
+
+        :rtype: dict
+        '''
         data = {}        
         for name, value in config.items(section):
             if value.lower()=="true": v = True
@@ -281,27 +328,23 @@ class Application(wx.App):
 
 
     def InitConfig(self):
-
-        self.path["config"] = os.path.join(self.path["root"],"config.ini")
-        #echo("Config: %s" % self.path["config"])
-        #with open(self.path["config"], "rt", encoding="utf-8") as f: print(f.read())
-
-        self.config = self.ConfigParser( self.path["config"] )
+        '''Load application initial configuration.
+        '''
+        path = os.path.join(self.path["root"],"config.ini")
+        self.path["config"] = path
+        self.config = self.ConfigParser( path )    
+        self.system = self.ConfigDict(self.config, "SYSTEM")
         self.language = self.config.get("SYSTEM", "language")
         self.database = self.config.get("SYSTEM", "database")
     
-        self.system = self.ConfigDict(self.config, "SYSTEM")
-
         if "DEBUG" in self.system:  
             self.debug = self.system["DEBUG"] 
 
 
 
-
-
-
     def InitDataBase(self):
-        
+        '''Create the local sqlite3 database for local user data.
+        '''
         self.path["db"] = os.path.join(self.path["user"], self.database)
         self.DB = DataBase(self.path["db"])
         if len(self.DB.tables())==0: 
@@ -313,99 +356,17 @@ class Application(wx.App):
                 sql=""
                 for line in query.splitlines(): sql+=line
                 self.DB.query(sql)
-        #print(self.DB.info())
-        #self.DB.types("type") 
-
-
-
-    def InitLanguage(self):
-        return
-        
-        file=os.path.join(PATH_DATA,"language",self.language+".ini")
-        config = configparser.RawConfigParser()
-        config.read(file)
-        self.language_name = config.get("LANGUAGE", "name")
-        self.date={}
-        for name, value in config.items("DATA"): TEXT_DB[name.upper()]=value
-        for name, value in config.items("TEXT"): TEXT[name.upper()]=value
-        for name, value in config.items("HELP"): HELP[name.upper()]=value
-        for name, value in config.items("ERROR"): ERROR[name.upper()]=value
-        for name, value in config.items("DATE"): self.date[name]=value
-        
-        if "APP_DESC" in HELP: App.Description = HELP["APP_DESC"]
-        if "APP_LICENSE" in HELP: App.License = HELP["APP_LICENSE"]
-
-        
-    def InitInstall(self):
-        
-        #print TEXT["PATH_HOME"]+":", PATH_HOME
-        #print TEXT["PATH_DATA"]+":", self.path_user
-        #print TEXT["LANGUAGE"]+": " + self.language_name
-        
-        # Return if log file exists
-        log = os.path.join(self.path["user"], "install.log")
-        marker = "Installation: %s\n" % self.path["main"]
-        if os.path.exists(log): 
-            with open(log) as f: txt = f.read()
-            if marker in txt: return
-        
-
-        print("")
-        print(TEXT["INSTALLING"])
-        print("-"*79)
-
-        
-        #Create log file
-        with open(log, "w") as f:            
-            f.write(marker)
-            f.write("Timestamp: %s" % timestamp())
-
-
-        #Extract local.zip if exists
-        data = os.path.join(self.path["main"], "local.zip")
-        if not os.path.exists(data):
-            print(HELP["LOCAL_DATA_NOT_FOUND"])
-            return
-        n = zip_extract(data, self.path["user"])
-        if n == 0: 
-            self.Error(ERROR["USER_DATA_NOT_INSTALLED"])
-        
-        print("-"*79)
-        print("")
-
-        #Backup existing database on every install
-        print("SQLite file: %s" % self.path["db"])
-        copy = ""
-        if os.path.exists(self.path["db"]):
-            copy = "base_"+filestamp()+".s3db"
-            print("Backup %s" % copy) 
-            shutil.copy2(self.path["db"], os.path.join(self.path["user"], copy))
-            #delete original database?
-
-
-    def InitResources(self):
-        
-        for name, value in self.config.items("ICON"): 
-            if not ".png" in value: value+=".png"
-            ICON[name.upper()] = value
-
-        for name, value in self.config.items("IMAGE"): 
-            if (not ".png" in value) and (not ".jpg" in value): value+=".png"
-            IMAGE[name.upper()] = value
-
-
 
 
     def OnAbout(self, evt):
-        """ Display the wx.adv.AboutBox
-        """
+        '''Display the About box
+        '''
         info = adv.AboutDialogInfo()
         info.SetName(self.Title)
         info.SetVersion(self.Version)
         info.SetCopyright(self.Copyright)
         #info.Description = wordwrap(self.Description, 350, wx.ClientDC(self.TopWindow))
                 
-
         x = '\n'.join([
             self.info["python"],
             "WX Phoenix "+self.info["wx"]+"\n",
@@ -423,11 +384,25 @@ class Application(wx.App):
 
 
     def threads(self):
+        '''Get all runing threads.
+        '''
         return threading.enumerate()
 
 
         
     def Run(self, module="__auto__"):
+        '''Execute the module.
+
+        Calls the function returned by the defined call method.
+
+        :parameters:
+            `module` : string
+                Module name.
+        
+        :return: 
+        :rtype: ``Unknown``
+
+        '''
         try:
             return self.run_module( module )(self)
 
@@ -442,10 +417,10 @@ class Application(wx.App):
 
 
     def load_module(self, name):
-        """ Loads the module 
-            Creates menuitem
-            
-        """
+        ''' Custom modules loader
+
+        Configures the module definition and creates custom GUI elements.    
+        '''
         
         module = importlib.import_module(name, package=None)
         
@@ -467,13 +442,17 @@ class Application(wx.App):
             echo("Module Define not found: %s" % name)
             return None
 
+
     def run_module(self, name):
-        """ Returns the function that calls a new Task on the module's run function 
+        '''Get the defined execution call. 
 
-            Define.run
-            Define.task
+        The default method returns a function that calls if found:
 
-        """
+        - 1. the run method: Code executed in main thread 
+        - 2. the task method: Start a new background task 
+
+        TODO: use a loaded module cache 
+        '''
         
         define = None
         module = importlib.import_module(name, package=None)
@@ -490,8 +469,8 @@ class Application(wx.App):
 
 
     def run_process_module(self, name):
-        """ Returns the function that calls a new Task on the module's run function 
-        """
+        ''' TODO: multiprocessing modules
+        '''
         def run(e):
             module = importlib.import_module(name, package=None)
             
@@ -512,9 +491,9 @@ class Application(wx.App):
 
 
 
-
-
     def run_explorer(self, folder):
+        '''Open a new Windows Explorer. 
+        '''
         def run(e):
             fn = 'explorer.exe "%s"' % (folder)
             subprocess.Popen( fn , shell=True)
@@ -523,6 +502,8 @@ class Application(wx.App):
 
 
     def run_file(self, path):
+        '''Run default application to open a file.
+        '''
         def run(e): 
             os.startfile(path) 
             self.win.Status("Open "+path)

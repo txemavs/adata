@@ -119,9 +119,7 @@ SOFTWARE.
             sys.stderr = self.win.console
 
         self.InitDataBase()
-        #self.InitLanguage()
-        #self.InitInstall()
-        #self.InitResources()
+
        
 
     

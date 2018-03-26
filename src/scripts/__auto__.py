@@ -15,7 +15,8 @@ from adata import echo, publish
 
        
 class Command(adata.Commands):
-
+    __doc__ = adata.Commands.__doc__
+    
     def do_stop(self, e):
         publish("app.stop")
     

@@ -3,6 +3,10 @@
 '''
 Interactive Interpreter
 
+.. seealso:: `cmd2 <https://cmd2.readthedocs.io/en/latest/unfreefeatures.html>`_
+
+
+
 '''
 import os
 import sys
@@ -20,16 +24,25 @@ from prettytable import PrettyTable
 
 
 class Interpreter(code.InteractiveInterpreter):
-    def write(self, data):
-        echo(data)
+    __doc__ = code.InteractiveInterpreter.__doc__
+    
+    def write(self, text):
+        '''Adata override: pubsub event send.
+        
+        :parameters:
+            `text` : string
+                Output.
+        '''
+        echo(text)
                      
 
-# https://cmd2.readthedocs.io/en/latest/unfreefeatures.html#poutput-pfeedback-perror-ppaged
+
 
 class Commands(Cmd):
-    ''' Interactive interpreter: command, script or code
+    '''Adata interactive interpreter: execute command, script or code.
+    
     '''
-
+    
     __script = {}
     __module = {}
     stdout = Output()
@@ -37,11 +50,11 @@ class Commands(Cmd):
 
  
     def __init__(self, app):
-        '''
-        A cmd2 interpreter
+        '''Create a cmd2 interpreter.
 
-        :param app: the main app
-        :type app: adata.core.Application
+        :parameters:
+            `app` : ``adata.core.Application``
+                The main application.
         '''
         env = {
             'app': app,
@@ -58,8 +71,11 @@ class Commands(Cmd):
 
 
     def poutput(self, msg, end='\n'):
-        ''' Overriden Cmd.poutput direct to console
+        '''Adata override of cmd2.Cmd.poutput method: print to console.
+            
         '''
+        #poutput-pfeedback-perror-ppaged
+
         if msg is not None and msg != '':
             try:
                 msg_str = '{}'.format(msg)
@@ -80,25 +96,28 @@ class Commands(Cmd):
 
 
     def Prompt(self, console):
-        ''' 
-        Attach a interactive input handler to a console
+        '''Attach a interactive input handler to a Console instance.
 
         Try:
          - 1. first word is cmd2: This interpreter - see help 
          - 2. first word is a script: run the module
          - 3. code: code.InteractiveInterpreter: python
         
-        :param console: the console
-        :type console: adata.gui.text.Console
-
+        :parameters:
+            `console` : ``adata.gui.text.Console``
+                The console.
+        
+        :return: self
+        :rtype: `Commands`
         '''
 
         def handler(cmd): 
             ''' 
             Console.Enter handler (Commands class overriden)
-
-            :param cmd: command line
-            :type cmd: string
+            
+            :parameters:
+                `cmd` : string
+                    A command line.
             '''
 
             if cmd=="help()": cmd = "import this" 
@@ -122,11 +141,11 @@ class Commands(Cmd):
             self.code.runsource(cmd) # Are you sure?
                 
         console.Enter = handler # Take input method
-
+        return self
 
 
     def iter_scripts(self):
-        ''' List file names in /scripts folder
+        '''List file names in the /scripts folder.
         '''
         for x in os.listdir(self.app.path["scripts"]):
             name = os.path.splitext(x)[0]
@@ -144,6 +163,9 @@ class Commands(Cmd):
 
     def is_command(self, keyword):
         ''' Does a do_name method exist?
+        
+        :return: Attribute exists.
+        :rtype: bool
         '''
         return ('do_' + keyword) in dir(self)
 
@@ -169,7 +191,15 @@ class Commands(Cmd):
 
     
     def do_module(self, name):
-        ''' Load or reload a module.
+        '''Load or reload a module.
+
+        :parameters:
+            `name` : string
+                Module name
+
+        :return: Module imported without errors
+        :rtype: bool
+
         '''
         try:        
             if name in self.__module.keys():
@@ -179,13 +209,15 @@ class Commands(Cmd):
                 module = importlib.import_module(name, package=None)
                 self.__module[name] = module
                 echo("OK")
-
+            return True
+        
         except Exception as error:
             echo("%s" % error)
-            # Clean module
+            # Clean module to reload
+            return False
 
-
-            
+# Add original documentation
+Commands.__doc__ += Cmd.__doc__      
             
             
             
@@ -202,6 +234,12 @@ def visit(url):
             name = meta.get("property")
         print(" -- %s -> %s" % (name, meta.get("content")))
 
+def read_file(path, encoding="utf-8"):
+    ''' Prints a text file
+    '''
+    with open(path, "rt", encoding=encoding) as f: 
+        print(f.read())
+
 
 def dir_pretty(var, grep=None):
     ''' Pretty dir command 
@@ -212,7 +250,7 @@ def dir_pretty(var, grep=None):
     pretty.align["__doc__"] = "l"
 
     for item in dir(var):     
-        if "__" in item: continue
+        if item[0]=="_": continue
         if grep is not None and not grep in item: continue
 
         obj = getattr(var, item)
