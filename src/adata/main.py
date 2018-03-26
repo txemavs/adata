@@ -1,20 +1,8 @@
 # adata.main
-
 ''' Main adata application and console window
 '''
 
 from .window.main import *
-
-
-
-#  .d8b.  d8888b. d8888b. 
-# d8' `8b 88  `8D 88  `8D 
-# 88ooo88 88oodD' 88oodD' 
-# 88~~~88 88~~~   88~~~   
-# 88   88 88      88      
-# YP   YP 88      88      
-#------------------------------------------------------------------------------
-
 
 class App(Application):
     ''' The Adata main application is a text console window.
@@ -163,6 +151,12 @@ SOFTWARE.
 
 
 
+    def Documentation(self, event=None):
+        uri = "file:///"+os.path.join(self.path["www"], "documentation", "index.html")
+        echo(uri)
+        webbrowser.open(uri) 
+
+
 
 
 
@@ -197,14 +191,6 @@ class Window(TopWindow):
             publish("app.stop")
             self.app.reactor.stop()        
             return
-
-
-
-    def OnManual(self, event=None):
-        #uri = "http://www.videotiro.com/smc/manual/"
-        uri = "file:///"+os.path.join(PATH_DATA,"help","index.html")
-        webbrowser.open(uri) 
-
 
 
     def Status(self, text=None, console=False, mode=None):

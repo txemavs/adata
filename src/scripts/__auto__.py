@@ -83,10 +83,13 @@ class Define(adata.Module):
                 },
             ]),
             ("Help",[
-                {
-                    'name': "About Adata...", 
-                    'call': app.OnAbout, 
+                {          
+                    'name': "Documentation", 
+                    'call': app.Documentation, 
                     'icon': "help.png", 
+                },{
+                    'name': "About Adata...", 
+                    'call': app.About, 
                     'help': "Automation Framework"
                 }
             ])

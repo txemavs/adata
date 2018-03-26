@@ -33,4 +33,5 @@ MIT License
 
 from .core import *
 
-
+__author__ = 'Txema Vicente'
+__version__ = '0.0.1'

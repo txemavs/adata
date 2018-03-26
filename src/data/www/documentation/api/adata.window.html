@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>adata.window package &mdash; Adata 0.0.1</title>
+    
+    <link rel="stylesheet" href="../_static/adatadoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="Adata 0.0.1" href="../index.html" />
+    <link rel="up" title="adata package" href="adata.html" />
+    <link rel="prev" title="adata.gui package" href="adata.gui.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="adata.gui.html" title="adata.gui package"
+             accesskey="P">previous</a> |</li>
+		<li><a href="http://nabla.net/adata">Adata</a> |</li>
+		<li><a href="../index.html">Documentation Index</a> &raquo;</li>
+          <li><a href="adata.html" accesskey="U">adata package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="adata-window-package">
+<h1>adata.window package<a class="headerlink" href="#adata-window-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-adata.window.main">
+<span id="adata-window-main-module"></span><h2>adata.window.main module<a class="headerlink" href="#module-adata.window.main" title="Permalink to this headline">¶</a></h2>
+<p>The base class for the Adata top window.</p>
+<p>A Frame with Menu, the console and a status bar.</p>
+<dl class="class">
+<dt id="adata.window.main.StatusBar">
+<em class="property">class </em><code class="descname">StatusBar</code><span class="sig-paren">(</span><em>win</em>, <em>app</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.StatusBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wx._core.StatusBar</span></code></p>
+<dl class="method">
+<dt id="adata.window.main.StatusBar.Refresh">
+<code class="descname">Refresh</code><span class="sig-paren">(</span><em>eraseBackground=True</em>, <em>rect=None</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.StatusBar.Refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Causes this window, and all of its children recursively (except under
+wxGTK1 where this is not implemented), to be repainted.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="adata.window.main.TopWindow">
+<em class="property">class </em><code class="descname">TopWindow</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wx._core.Frame</span></code></p>
+<p>A wx frame with some helpers</p>
+<p>Events,</p>
+<p>Menu,</p>
+<p>Dialogs</p>
+<dl class="method">
+<dt id="adata.window.main.TopWindow.AddMenu">
+<code class="descname">AddMenu</code><span class="sig-paren">(</span><em>title</em>, <em>menuitem</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.AddMenu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create MenuBar and Menur if needed, and add a MenuItem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.AddMenuItem">
+<code class="descname">AddMenuItem</code><span class="sig-paren">(</span><em>menu</em>, <em>name=''</em>, <em>call=None</em>, <em>help=''</em>, <em>style=0</em>, <em>icon=None</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.AddMenuItem" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.DirDialog">
+<code class="descname">DirDialog</code><span class="sig-paren">(</span><em>message</em>, <em>defaultPath='C:'</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.DirDialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns path or None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.Error">
+<code class="descname">Error</code><span class="sig-paren">(</span><em>message</em>, <em>title='Error'</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.Error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.FileDialog">
+<code class="descname">FileDialog</code><span class="sig-paren">(</span><em>message</em>, <em>defaultDir='C:'</em>, <em>wildcard='*.*'</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.FileDialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns file path or None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.Initialize">
+<code class="descname">Initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.Initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.Message">
+<code class="descname">Message</code><span class="sig-paren">(</span><em>message</em>, <em>title='Message'</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.Message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.OnClose">
+<code class="descname">OnClose</code><span class="sig-paren">(</span><em>event=None</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.OnClose" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.OnCloseWindow">
+<code class="descname">OnCloseWindow</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.OnCloseWindow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.OnEcho">
+<code class="descname">OnEcho</code><span class="sig-paren">(</span><em>text</em>, <em>style='default'</em>, <em>lf=True</em>, <em>marker=None</em>, <em>icon=None</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.OnEcho" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle a app.echo event at the main thread
+Do not use <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs because the spec check</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.OnExit">
+<code class="descname">OnExit</code><span class="sig-paren">(</span><em>event=None</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.OnExit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.OnSize">
+<code class="descname">OnSize</code><span class="sig-paren">(</span><em>event=None</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.OnSize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.OnTaskEvent">
+<code class="descname">OnTaskEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.OnTaskEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show Result status.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.OnTaskInfo">
+<code class="descname">OnTaskInfo</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.OnTaskInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.OnTimer">
+<code class="descname">OnTimer</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.OnTimer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.Question">
+<code class="descname">Question</code><span class="sig-paren">(</span><em>message</em>, <em>title='Question'</em><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.Question" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="adata.window.main.TopWindow.UserInterface">
+<code class="descname">UserInterface</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#adata.window.main.TopWindow.UserInterface" title="Permalink to this definition">¶</a></dt>
+<dd><p>The usual layout is one scintilla text window</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-adata.window">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-adata.window" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">adata.window package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-adata.window.main">adata.window.main module</a></li>
+<li><a class="reference internal" href="#module-adata.window">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="adata.gui.html"
+                        title="previous chapter">adata.gui package</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="adata.gui.html" title="adata.gui package"
+             >previous</a> |</li>
+		<li><a href="http://nabla.net/adata">Adata</a> |</li>
+		<li><a href="../index.html">Documentation Index</a> &raquo;</li>
+          <li><a href="adata.html" >adata package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2018, Txema Vicente.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.7.2.
+    </div>
+  </body>
+</html>

@@ -15,6 +15,7 @@ import configparser
 import importlib
 import traceback
 import subprocess
+import webbrowser
 
 
 from wx import adv 
@@ -358,7 +359,7 @@ class Application(wx.App):
                 self.DB.query(sql)
 
 
-    def OnAbout(self, evt):
+    def About(self, evt):
         '''Display the About box
         '''
         info = adv.AboutDialogInfo()
