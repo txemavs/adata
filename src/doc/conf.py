@@ -11,7 +11,6 @@ from sphinx.ext.autodoc import (
 
 def iad_add_directive_header(self, sig):
     ClassLevelDocumenter.add_directive_header(self, sig)
-
 InstanceAttributeDocumenter.add_directive_header = iad_add_directive_header
 
 
@@ -26,19 +25,6 @@ except ImportError:
     print("ERROR: Adata not found")
     sys.exit(1)
 
-
-def write_build(data, filename):
-    with open( filename, 'w') as f:
-        f.write(".. list-table::\n")
-        f.write("   :widths: 50 50\n")
-        f.write("\n")
-        for var, val in data:
-            f.write("   * - "+var+"\n     - "+val+"\n")
-
-now = datetime.datetime.fromtimestamp(time.time())
-data = (("Date", now.strftime("%Y/%m/%d %H:%M:%S")),
-        ("Adata version", adata.__version__))
-write_build( data, 'build.rst')
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -72,3 +58,17 @@ html_use_index = True
 html_split_index = True
 html_show_sourcelink = False
 htmlhelp_basename = 'adatadoc'
+
+
+def write_build(data, filename):
+    with open( filename, 'w') as f:
+        f.write(".. list-table::\n")
+        f.write("   :widths: 50 50\n")
+        f.write("\n")
+        for var, val in data:
+            f.write("   * - "+var+"\n     - "+val+"\n")
+
+now = datetime.datetime.fromtimestamp(time.time())
+data = (("Date", now.strftime("%Y/%m/%d %H:%M:%S")),
+        ("Adata version", adata.__version__))
+write_build( data, 'build.rst')
