@@ -151,7 +151,7 @@ class Console(StyledText):
     '''
 
     __history = []
-    __history_index = None
+    __history_index = -1
     __zoom = 0
     __find = ""
 
@@ -283,7 +283,7 @@ class Console(StyledText):
         pos_prompt = self.GetLineIndentPosition(line_prompt)
         pos = self.GetCurrentPos()
 
-        if pos-pos_prompt<len(self.prompt): # U can't touch
+        if pos-pos_prompt<len(self.prompt): # U can't touch this
             self.GotoPrompt()
             return 
 
@@ -292,7 +292,7 @@ class Console(StyledText):
             return event.Skip()
         
         if keycode in [wx.WXK_LEFT, wx.WXK_BACK]:
-            if (pos-pos_prompt)==len(self.prompt): # Don't go
+            if (pos-pos_prompt)==len(self.prompt): # Don't go there
                 return  
 
         if keycode==wx.WXK_RETURN:    
@@ -304,21 +304,22 @@ class Console(StyledText):
             self.echo(self.prompt+cmd,"fore:#ffff00,bold")
             self.GotoPrompt('')
             self.__history.insert(0, cmd)
-            self.__history_index = 0
+            self.__history_index = -1
             self.Enter(cmd)
             return
 
         # Command history
-        if self.__history_index is None: return
-        
-        if keycode==wx.WXK_UP:
-            self.GotoPrompt( self.__history[self.__history_index] )
-            if (self.__history_index+1)<len(self.__history): self.__history_index+=1
-            return
+        if keycode in [wx.WXK_UP, wx.WXK_DOWN]:
+            
+            if keycode==wx.WXK_UP and self.__history_index<len(self.__history)-1: 
+                self.__history_index+=1
+            
+            if keycode==wx.WXK_DOWN and self.__history_index>0: 
+                self.__history_index-=1
+            
+            if self.__history_index<0: return
 
-        if keycode==wx.WXK_DOWN:
             self.GotoPrompt( self.__history[self.__history_index] )
-            if self.__history_index>0: self.__history_index-=1
             return
 
         event.Skip()
