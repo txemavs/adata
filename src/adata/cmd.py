@@ -101,7 +101,7 @@ class Commands(Cmd):
             :type cmd: string
             '''
 
-            if cmd=="help()": cmd="import this" 
+            if cmd=="help()": cmd = "import this" 
             # help() fails at , why?
 
             # Rules
@@ -109,7 +109,7 @@ class Commands(Cmd):
                 self.runcmds_plus_hooks(cmd.split('\n'))
                 return 
 
-            if cmd in self.list_scripts(): # Import or reload
+            if cmd in self.iter_scripts(): # Import or reload
                 
                 if cmd in self.__script.keys():
                     importlib.reload(self.__script[cmd])
@@ -125,12 +125,15 @@ class Commands(Cmd):
 
 
 
-    def list_scripts(self):
+    def iter_scripts(self):
         ''' List file names in /scripts folder
         '''
-        path = self.app.path["scripts"]
-        return [ os.path.splitext(x)[0] for x in os.listdir(path) ]
-        
+        for x in os.listdir(self.app.path["scripts"]):
+            name = os.path.splitext(x)[0]
+            if name[0]=="_": continue
+            yield name
+
+     
 
 
 
@@ -161,7 +164,7 @@ class Commands(Cmd):
         if args.something:
             self.code.runsource('dir_pretty(%s)' % source )
         else:
-            print(self.list_scripts() )
+            print( '\n'.join( self.iter_scripts() ))
             
 
     
@@ -203,9 +206,9 @@ def visit(url):
 def dir_pretty(var, grep=None):
     ''' Pretty dir command 
     '''
-    pretty = PrettyTable(["type", "__name__", "__doc__"]) 
-    pretty.align["type"] = "l" 
+    pretty = PrettyTable([ "__name__", "type", "__doc__"]) 
     pretty.align["__name__"] = "l" 
+    pretty.align["type"] = "l" 
     pretty.align["__doc__"] = "l"
 
     for item in dir(var):     
@@ -213,15 +216,15 @@ def dir_pretty(var, grep=None):
         if grep is not None and not grep in item: continue
 
         obj = getattr(var, item)
-        typ = type(obj).__name__
-
+        obj_type = type(obj).__name__
+        
         if obj.__doc__ is None:
             doc = ""
         else:
             doc = obj.__doc__.split('\n')[0]
         if len(doc)>80:
             doc = doc[0:40]
-        pretty.add_row([ typ, "%s" % item,  doc  ])
+        pretty.add_row([ "%s" % item, obj_type, doc ])
     echo(var.__doc__, "ffffff")
     echo(pretty.get_string())
 
