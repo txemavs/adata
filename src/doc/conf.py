@@ -3,32 +3,16 @@ import sys
 import time
 import datetime
 
-# Prevents instance attributes from having a default value of None
-# See sphinx ticket: https://github.com/sphinx-doc/sphinx/issues/2044
-from sphinx.ext.autodoc import (
-    ClassLevelDocumenter, InstanceAttributeDocumenter)
-
-def iad_add_directive_header(self, sig):
-    ClassLevelDocumenter.add_directive_header(self, sig)
-
-InstanceAttributeDocumenter.add_directive_header = iad_add_directive_header
-
-
-sys.path.insert(0, os.path.abspath('..'))
 
 document_modules = ["adata"]
 
+extensions = ['sphinx.ext.autodoc',
+              'sphinx.ext.autosummary',
+              'sphinx.ext.inheritance_diagram', 
+              'sphinx.ext.todo',
+              ]
 
-def write_build(data, filename):
-    with open( filename, 'w') as f:
-        f.write(".. list-table::\n")
-        f.write("   :widths: 50 50\n")
-        f.write("\n")
-        for var, val in data:
-            f.write("   * - "+var+"\n     - "+val+"\n")
-
-
-
+sys.path.insert(0, os.path.abspath('..'))
 
 try:
     import adata
@@ -38,27 +22,12 @@ except ImportError:
     sys.exit(1)
 
 
-# For each module, a list of submodules that should not be imported.
-# If value is None, do not try to import any submodule.
-#skip_modules = {"adata": {}}
 
-now = datetime.datetime.fromtimestamp(time.time())
-data = (("Date", now.strftime("%Y/%m/%d %H:%M:%S")),
-        ("Adata version", adata.__version__))
+autosummary_generate = True
 
-write_build(data, 'build.rst')
-
-
-#autosummary_generate = False
 inheritance_graph_attrs = dict(rankdir="LR", size='""')
 
-extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.inheritance_diagram', 
-              'sphinx.ext.todo',
-              #'sphinx.ext.napoleon'
-              ]
-
-autodoc_member_order='groupwise'
+#autodoc_member_order='groupwise'
 source_suffix = '.rst'
 #source_encoding = 'utf-8-sig'
 
@@ -86,3 +55,17 @@ html_show_sourcelink = False
 htmlhelp_basename = 'adatadoc'
 
 
+
+def write_build(data, filename):
+    with open( filename, 'w') as f:
+        f.write(".. list-table::\n")
+        f.write("   :widths: 50 50\n")
+        f.write("\n")
+        for var, val in data:
+            f.write("   * - "+var+"\n     - "+val+"\n")
+
+now = datetime.datetime.fromtimestamp(time.time())
+data = (("Date", now.strftime("%Y/%m/%d %H:%M:%S")),
+        ("Adata version", adata.__version__))
+
+write_build(data, 'build.rst')

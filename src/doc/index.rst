@@ -10,12 +10,23 @@ custom scripts and event handling
 Adata package
 -------------
 
+.. autosummary::
+   :toctree: api/
+   :template: package.rst
+ 
+   adata
+
+
+
+
+API Reference
+==============
+
 .. toctree::
    :maxdepth: 3
 
-   ./api/adata
+   api/adata
 
-   
 
 Related Documentation
 ---------------------
