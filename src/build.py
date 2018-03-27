@@ -11,7 +11,7 @@ print("CX_Freeze: Building Adata...")
 build_path = '..\\build\\'
 
 executable = Executable(
-    script = 'adata.py',
+    script = 'adata_run.py',
     icon = "data/www/favicon.ico",
     base = "Win32GUI" # Use Console for stdout
 )
