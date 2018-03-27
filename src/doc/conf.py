@@ -3,6 +3,7 @@ import sys
 import time
 import datetime
 
+<<<<<<< HEAD
 
 document_modules = ["adata"]
 
@@ -14,6 +15,23 @@ extensions = ['sphinx.ext.autodoc',
 
 sys.path.insert(0, os.path.abspath('..'))
 
+=======
+# Prevents instance attributes from having a default value of None
+# See sphinx ticket: https://github.com/sphinx-doc/sphinx/issues/2044
+from sphinx.ext.autodoc import (
+    ClassLevelDocumenter, 
+    InstanceAttributeDocumenter )
+
+def iad_add_directive_header(self, sig):
+    ClassLevelDocumenter.add_directive_header(self, sig)
+InstanceAttributeDocumenter.add_directive_header = iad_add_directive_header
+
+
+sys.path.insert(0, os.path.abspath('..'))
+
+document_modules = ["adata"]
+
+>>>>>>> d7881777418b9171fb430bc403552fcd0b6c6efd
 try:
     import adata
     print("Generating Adata %s Documentation" % (adata.__version__))
@@ -22,14 +40,24 @@ except ImportError:
     sys.exit(1)
 
 
+<<<<<<< HEAD
 
 autosummary_generate = True
 
 inheritance_graph_attrs = dict(rankdir="LR", size='""')
 
 #autodoc_member_order='groupwise'
+=======
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.inheritance_diagram', 
+    'sphinx.ext.todo',
+]
+
+inheritance_graph_attrs = dict(rankdir="LR", size='""')
+autodoc_member_order='groupwise'
+>>>>>>> d7881777418b9171fb430bc403552fcd0b6c6efd
 source_suffix = '.rst'
-#source_encoding = 'utf-8-sig'
 
 project = u'Adata'
 copyright = u'2018, Txema Vicente'
@@ -55,7 +83,10 @@ html_show_sourcelink = False
 htmlhelp_basename = 'adatadoc'
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d7881777418b9171fb430bc403552fcd0b6c6efd
 def write_build(data, filename):
     with open( filename, 'w') as f:
         f.write(".. list-table::\n")
@@ -67,5 +98,9 @@ def write_build(data, filename):
 now = datetime.datetime.fromtimestamp(time.time())
 data = (("Date", now.strftime("%Y/%m/%d %H:%M:%S")),
         ("Adata version", adata.__version__))
+<<<<<<< HEAD
 
 write_build(data, 'build.rst')
+=======
+write_build( data, 'build.rst')
+>>>>>>> d7881777418b9171fb430bc403552fcd0b6c6efd
