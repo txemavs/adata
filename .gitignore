@@ -1,6 +1,8 @@
 # Adata
 /src/doc/api
 /src/doc/generate.bat
+
+/src/data/www/documentation
 /src/data/www/documentation/.doctrees
 /src/data/www/documentation/_sources
 
