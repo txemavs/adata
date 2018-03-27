@@ -1,3 +1,6 @@
+''' Tests suite.
+'''
+
 import wx
 import os
 import sys

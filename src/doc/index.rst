@@ -22,8 +22,7 @@ Modules
    :template: package.rst
  
    adata
-   adata_run
-   adata.core
+   adata.main
    adata.pubsub
    adata.gui
    adata.gui.text

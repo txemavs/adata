@@ -79,7 +79,7 @@ class WebSocketProtocol(websocket.WebSocketServerProtocol):
     
 
     def onConnect(self, request):
-        ''' Client connects
+        ''' Client connects (override)
         '''
         key = request.headers["sec-websocket-key"]
         self.clients[key] = request
@@ -95,7 +95,7 @@ class WebSocketProtocol(websocket.WebSocketServerProtocol):
 
 
     def onClose(self, wasClean, code, reason):
-        ''' Client disconnects
+        ''' Client disconnects (override)
         '''        
         key = self.keys[self.connections.index(self)]
         self.connections.remove(self)
@@ -113,7 +113,7 @@ class WebSocketProtocol(websocket.WebSocketServerProtocol):
 
 
     def onMessage(self, data, isBinary):
-        ''' Client message
+        ''' Client message (override)
         '''
         key = self.GetKey()
         if self.OnClientMessage( data, isBinary):
