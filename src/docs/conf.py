@@ -52,6 +52,7 @@ htmlhelp_basename = 'adatadoc'
 
 def run_apidoc():
     cur_dir = os.path.abspath(os.path.dirname(__file__))
+    package_path = os.path.abspath(os.path.dirname(cur_dir))
     output_path = os.path.join(cur_dir, 'api')
     cmd_path = 'sphinx-apidoc'
     if hasattr(sys, 'real_prefix'):
@@ -60,6 +61,8 @@ def run_apidoc():
         for folder in ['bin', 'Scripts']:
             if folder in d:
                 cmd_path = os.path.abspath(os.path.join(sys.prefix, folder, 'sphinx-apidoc'))
-    subprocess.check_call([cmd_path, '-e', '-o', output_path, "..", '--force', '--separate'])
+    print("sphinx apidoc read %s" % (package_path) )
+    print("sphinx apidoc write %s" % (output_path) )
+    subprocess.check_call([cmd_path, '--force', '--separate', '-o', output_path, package_path])
 
 run_apidoc()   
