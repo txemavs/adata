@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import datetime
+import subprocess
 
 project = u'Adata'
 copyright = u'2018, Txema Vicente'
@@ -49,3 +50,12 @@ html_split_index = True
 html_show_sourcelink = False
 htmlhelp_basename = 'adatadoc'
 
+def run_apidoc(_):
+    module=".."
+    cur_dir = os.path.abspath(os.path.dirname(__file__))
+    output_path = os.path.join(cur_dir, 'api')
+    cmd_path = 'sphinx-apidoc'
+    subprocess.check_call([cmd_path, '-e', '-o', output_path, module, '--force', '--separate'])
+
+def setup(app):
+    app.connect('builder-inited', run_apidoc)

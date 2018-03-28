@@ -36,7 +36,7 @@ Modules
 .. toctree::
    :maxdepth: 2
 
-   All modules <api/modules>
+   api/modules
 
 
 Related Documentation
