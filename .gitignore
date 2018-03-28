@@ -1,5 +1,16 @@
 # Adata
-modules/
+
+/src/docs/api
+/src/docs/generate.bat
+
+/src/data/www/documentation
+/src/data/www/documentation/.doctrees
+/src/data/www/documentation/_sources
+
+
+/src/*.bat
+/src/modules/*
+!/src/modules/README.txt 
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

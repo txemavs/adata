@@ -8,14 +8,12 @@ The application uses a twisted internet reactor with a graphical user interface,
 
  - The GUI and pubsub: WXPython 4 Phoenix 
  - Protocols: Twisted, Autobahn, Paho
- - Web scraping: Requests, LXML, BeautifoulSoup
- - Data: SQL and XLS modules.
  - CMD2: Console commands
  - CX_Freeze: to build the frozen portable enviroment
 
 Adata uses the pub/sub channels to create "if this then that" automated tasks.
 
-Any script can publish and be subscribed to a topic. You can be connected to MQTT or Websockets data streams, or create your own scheduled tasks to read databases or process files, and fire your events to a topic channel when something happens, so all the subscribed handlers are called.
+Any script can publish and be subscribed to a topic. You can be connected to MQTT or Websockets data streams, or create your own scheduled tasks to read databases or process files, and fire your events to a topic channel when something happens, so all the subscribed handlers get called.
 
 Adata can run its own web server with websockets. This allows to push data to connected web pages acting both as live data display and remote event emmiters.
 
@@ -26,7 +24,7 @@ Use examples:
  - Scrap information from one or more pages.
  - Render your custom web page.
 
-The complete release also includes many other packages like Numpy, Matplotlib, Pandas, Selenium, SQL and Spreadsheet packages.
+The full frozen release also includes many other packages like  Requests, LXML, BeautifoulSoup, Numpy, Matplotlib, Pandas, Selenium, SQL and Spreadsheet packages.
 
 I needed a portable platform to maintain the Python scripts that I do for my clients that normally only have a Windows PC and a mobile.
 
