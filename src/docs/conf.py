@@ -18,11 +18,11 @@ extensions = [
 ]
 
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../'))
 
-#import adata
-#release = adata.__version__
-release = '0.0.1'
+import adata
+release = adata.__version__
+#release = '0.0.1'
 
 autodoc_mock_imports = ['anytree', 'numpy', 'scipy', 'wx', 'openpyxl', 'xlrd']
 
