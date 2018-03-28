@@ -28,7 +28,7 @@ autodoc_mock_imports = ['anytree', 'numpy', 'scipy', 'wx', 'openpyxl', 'xlrd']
 
 autosummary_generate = True
 inheritance_graph_attrs = dict(rankdir="LR", size='""')
-#autodoc_member_order='groupwise'
+autodoc_member_order='groupwise'
 #source_suffix = '.txt'
 
 master_doc = 'index'
