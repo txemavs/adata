@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.abspath('..'))
 #release = adata.__version__
 release = '0.0.1'
 
-autodoc_mock_imports = ['anytree', 'numpy', 'scipy', 'wx', 'xlrd']
+autodoc_mock_imports = ['anytree', 'numpy', 'scipy', 'wx', 'openpyxl', 'xlrd']
 
 autosummary_generate = True
 inheritance_graph_attrs = dict(rankdir="LR", size='""')
@@ -50,12 +50,13 @@ html_split_index = True
 html_show_sourcelink = False
 htmlhelp_basename = 'adatadoc'
 
-def run_apidoc(_):
-    module=".."
+def run_apidoc():
     cur_dir = os.path.abspath(os.path.dirname(__file__))
     output_path = os.path.join(cur_dir, 'api')
     cmd_path = 'sphinx-apidoc'
-    subprocess.check_call([cmd_path, '-e', '-o', output_path, module, '--force', '--separate'])
+    if hasattr(sys, 'real_prefix'):  # Check to see if we are in a virtualenv
+        # If we are, assemble the path manually
+        cmd_path = os.path.abspath(os.path.join(sys.prefix, 'Scripts', 'sphinx-apidoc'))
+    subprocess.check_call([cmd_path, '-e', '-o', output_path, "..", '--force', '--separate'])
 
-def setup(app):
-    app.connect('builder-inited', run_apidoc)
+run_apidoc()   
