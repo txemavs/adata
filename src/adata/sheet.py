@@ -214,12 +214,15 @@ class Sheet(object):
            
 
 class Excel(object):
-    """ Usa openpyxl - se usa en carga_tarifa
-    Puede cargar:
-        -XLS con xlrd
-        -XLSX con openpyxl
-    Y graba sólo XLSX
-    """
+    '''Spreadsheet
+    
+    Load files:
+        -XLS - xlrd
+        -XLSX - openpyxl
+    
+    Save XLSX files
+
+    '''
 
     def __init__(self, archivo = None):
         self.sheet = []

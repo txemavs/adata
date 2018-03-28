@@ -177,7 +177,8 @@ class Commands(Cmd):
     
     @with_argparser( dir_parser )
     def do_dir(self, args ):
-        ''' Shows all the attributes
+        '''Shows all the attributes
+        
         '''
         #print(args.filter)
         #source = ' '.join(args.something)
