@@ -19,11 +19,11 @@ extensions = [
 
 sys.path.insert(0, os.path.abspath('..'))
 
-import adata
+#import adata
+#release = adata.__version__
+release = '0.0.1'
 
-release = adata.__version__
-
-autodoc_mock_imports = ['anytree', 'numpy', 'scipy', 'wx']
+autodoc_mock_imports = ['anytree', 'numpy', 'scipy', 'wx', 'xlrd']
 
 autosummary_generate = True
 inheritance_graph_attrs = dict(rankdir="LR", size='""')
@@ -38,8 +38,8 @@ add_module_names = False
 
 html_theme = 'adata'
 html_theme_path = ["theme"]
-html_title = "Adata %s" % (adata.__version__)
-html_short_title = "adata v%s documentation " % (adata.__version__)
+html_title = "Adata %s" % (release)
+html_short_title = "adata v%s documentation " % (release)
 html_logo = "theme/static/logo.png"
 html_favicon = "theme/static/favicon.ico"
 html_static_path = ['theme/static']
