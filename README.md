@@ -2,9 +2,8 @@
 Adata Automation Framework
 --------------------------
 
-.. image:: https://readthedocs.org/projects/adata/badge/?version=latest
-:target: http://adata.readthedocs.io/en/latest/?badge=latest
-:alt: Documentation Status
+[![Documentation Status](https://readthedocs.org/projects/adata/badge/?version=latest)](http://adata.readthedocs.io/en/latest/?badge=latest)
+
 
 The purpose of this application is to handle events with custom python scripts. The main interface is an interactive python console. It is based on a publisher/subscriber messaging pattern, so all the scripts can emit and listen to this event channels. 
 
