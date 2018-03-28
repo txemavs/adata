@@ -4,6 +4,18 @@ import time
 import datetime
 import subprocess
 
+from mock import Mock
+sys.modules['wx'] = Mock()
+sys.modules['wx.adv'] = Mock()
+sys.modules['wx.lib'] = Mock()
+sys.modules['wx.lib.buttons'] = Mock()
+sys.modules['wx.lib.pubsub'] = Mock()
+sys.modules['wx.lib.masked'] = Mock()
+sys.modules['wx.lib.wordwrap'] = Mock()
+
+
+
+
 project = u'Adata'
 copyright = u'2018, Txema Vicente'
 version = '0.1'

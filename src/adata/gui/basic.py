@@ -49,7 +49,12 @@ PATH_IMAGE = os.path.join(PATH, 'data', 'image')
 PATH_ICON = os.path.join(PATH_IMAGE, 'icon')
 BRD = 8
 BRB = 5
-EXA = wx.EXPAND|wx.ALL
+try:
+    EXA = wx.EXPAND|wx.ALL
+except:
+    # Mock
+    EXA = 8432
+    
 POS = wx.DefaultPosition
 SIZE = wx.DefaultSize
 
