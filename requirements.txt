@@ -42,5 +42,4 @@ sphinxcontrib-websupport==1.0.1
 Twisted==17.9.0
 txaio==2.9.0
 urllib3==1.22
-wxPython==4.0.1
 zope.interface==4.4.3
