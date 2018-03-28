@@ -19,15 +19,11 @@ extensions = [
 
 sys.path.insert(0, os.path.abspath('..'))
 
-try:
-    import adata
-    print("Generating Adata %s Documentation" % (adata.__version__))
-except ImportError:
-    print("ERROR: Adata not found")
-    sys.exit(1)
-
+import adata
 
 release = adata.__version__
+
+autodoc_mock_imports = ['anytree', 'numpy', 'scipy', 'wx']
 
 autosummary_generate = True
 inheritance_graph_attrs = dict(rankdir="LR", size='""')
