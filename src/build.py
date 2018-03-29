@@ -1,6 +1,13 @@
 ''' 
 CX_Freeze configuration and included packages.
 
+I needed a portable platform to maintain the Python scripts that I 
+do for my clients that normally only have a bad Windows PC and a mobile.
+
+Should work on any platform. 
+
+Tested on Windows 10 32 & 64bit. I had to use unofficial binaries.
+
 '''
 
 if __name__=='__main__':

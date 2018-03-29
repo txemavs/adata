@@ -1,21 +1,29 @@
 Adata documentation
 ===================
 
-**Adata** is a cross-platform python automation framework, focused on data, connections and event handling.
+The purpose of this application is to handle events with custom python scripts. The main interface is an interactive python console with programmable commands and plug-in modules. It is based on a publisher/subscriber messaging pattern, so all the scripts can emit and listen to this event channels. 
 
-The purpose is to have a portable enviroment to quickly deploy custom python scripts anywhere, with the power of the WX Phoenix graphic user interface.
+The application uses a Twisted internet reactor with a graphical user interface, to create a portable application including a python interpreter and a set of frozen python packages, mainly:
 
-Highlighs:
+ - The GUI and pubsub: WXPython 4 Phoenix 
+ - Protocols: Twisted, Autobahn, Paho
+ - CMD2: Console commands
+ - CX_Freeze: to build the frozen portable enviroment
 
-* A publisher / subscriber event handling system.
-* A Twisted internet reactor ready to serve.
-* Packages preinstalled in a portable frozen enviroment.
+Adata can run its own web server with websockets. This allows to push data to connected web pages acting both as live data display and remote event emmiters.
 
+Use examples:
+ - Use tablets as remote information display.
+ - Send and receive data from IoT devices.
+ - Check periodicaly databases and files.
+ - Scrap information from one or more pages.
+ - Render your custom web page.
+
+The full frozen release also includes many other packages like  Requests, LXML, BeautifoulSoup, Numpy, Matplotlib, Pandas, Selenium, SQL and Spreadsheet packages.
 
 
 Modules
 -------
-
 
 .. autosummary::
    :toctree: api/
@@ -36,7 +44,7 @@ Modules
 .. toctree::
    :maxdepth: 2
 
-   api/modules
+   API <api/modules>
 
 
 Related Documentation
@@ -47,5 +55,3 @@ Related Documentation
 * `Twisted Internet <http://twisted.readthedocs.io/en/twisted-17.9.0/core/howto/internet-overview.html>`_
 * `Websockets / WAMP - Autobahn <https://autobahn.readthedocs.io/en/latest/>`_
 * `MQTT - Eclipse Paho <https://www.eclipse.org/paho/clients/python/docs/>`_
-
-

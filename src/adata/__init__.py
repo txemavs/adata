@@ -4,9 +4,26 @@ Adata portable frozen event handling enviroment.
 
 https://github.com/txemavs/adata
 
-Copyright (c) 2018 Txema Vicente Segura
 
-MIT License
+Installation
+------------
+In Windows, you can simply download a frozen release and launch adata.exe.
+
+There is no pip install yet.
+
+
+Build
+-----
+If you want to fork this:
+- create your new python enviroment and activate it
+- use pip to install the requires.txt package list
+- clone this repository
+- launch adata_run.py
+
+
+If you want to use the cx_freezer to create your own portable enviroment, check and modify build.py to select packages and run:
+
+    <python> build.py build
 
 '''
 # Copyright (c) 2018 Txema Vicente Segura

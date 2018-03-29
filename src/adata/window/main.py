@@ -75,9 +75,10 @@ class TopWindow(wx.Frame):
 
 
     def OnEcho(self, text, style="default", lf=True, marker=None, icon=None):
-        """ Handle a app.echo event at the main thread
-            Do not use **kwargs because the spec check
-        """
+        ''' Handle a app.echo event at the main thread
+           
+        Do not use \*\*kwargs because the spec check
+        '''
         wx.CallAfter(self.console.echo, 
             text = text, 
             style = style, 

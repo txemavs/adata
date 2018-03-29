@@ -1,7 +1,16 @@
 #adata.tasks
 
 '''
-Threads
+Threads and processes
+
+Adata tasks can run on the main thread or spawn new threads. Any script can 
+publish and be subscribed to a pubsub topic. 
+
+You can be connected to MQTT or Websockets data streams, or create your own 
+scheduled tasks to read databases or process files, and fire your events to 
+a topic channel when something happens, so all the subscribed handlers do 
+their job.
+
 
 TODO: Subprocesses
 '''

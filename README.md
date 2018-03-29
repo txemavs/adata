@@ -4,61 +4,22 @@ Adata Automation Framework
 
 [![Documentation Status](https://readthedocs.org/projects/adata/badge/?version=latest)](http://adata.readthedocs.io/en/latest/?badge=latest)
 
+**Adata** is a cross-platform python automation framework, focused on data, connections and "If This Then That" event handling.
 
-The purpose of this application is to handle events with custom python scripts. The main interface is an interactive python console. It is based on a publisher/subscriber messaging pattern, so all the scripts can emit and listen to this event channels. 
+The purpose is to have a portable enviroment to quickly deploy custom python scripts anywhere, with the power of the WX Phoenix graphic user interface.
 
-The application uses a twisted internet reactor with a graphical user interface, to create a portable application including a python interpreter and a set of frozen python packages, mainly:
+Highlighs:
 
- - The GUI and pubsub: WXPython 4 Phoenix 
- - Protocols: Twisted, Autobahn, Paho
- - CMD2: Console commands
- - CX_Freeze: to build the frozen portable enviroment
-
-Adata uses the pub/sub channels to create "if this then that" automated tasks.
-
-Any script can publish and be subscribed to a topic. You can be connected to MQTT or Websockets data streams, or create your own scheduled tasks to read databases or process files, and fire your events to a topic channel when something happens, so all the subscribed handlers get called.
-
-Adata can run its own web server with websockets. This allows to push data to connected web pages acting both as live data display and remote event emmiters.
-
-Use examples:
- - Use tablets as remote information display.
- - Send and receive data from IoT devices.
- - Check periodicaly databases and files.
- - Scrap information from one or more pages.
- - Render your custom web page.
-
-The full frozen release also includes many other packages like  Requests, LXML, BeautifoulSoup, Numpy, Matplotlib, Pandas, Selenium, SQL and Spreadsheet packages.
-
-I needed a portable platform to maintain the Python scripts that I do for my clients that normally only have a Windows PC and a mobile.
+* A publisher / subscriber event handling system.
+* A Twisted internet reactor ready to serve.
+* Packages preinstalled in a portable frozen enviroment.
 
 
-The scripts
--------------
+You can deploy small services like a websocket server pushing data to "remote control" web applications, and connect MQTT devices, log to a database... it is python with some batteries.
 
-There are two folders to store python source code.
+I needed a portable platform to maintain the Python scripts that I do for my clients that normally only have a bad Windows PC and a mobile.
 
-- scripts: The examples bundled
-- modules: The private folder
-
-Adata executes the script __auto__ at initialization, so you can run your modules to create GUI elements and start works.
-
-
-Installation
-------------
-In Windows, you can simply download a frozen release and launch adata.exe.
-If you are a developer:
-- create your new python enviroment and activate it
-- use pip to install the requires.txt package list
-- clone this repository
-- launch adata.py
-
-
-Build
------
-
-If you want to use the cx_freezer to create your own portable enviroment, check and modify build.py to select packages and run:
-
-    <python> build.py build
+[Read the docs...](http://adata.readthedocs.io/en/latest/?badge=latest)
 
 
 
