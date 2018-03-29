@@ -70,7 +70,7 @@ def EVT_TASK(win, func):
 
 
 class TaskEvent(wx.PyEvent):
-    """ Simple event to carry result data.
+    """Simple event to carry result data.
     """
     def __init__(self, data):
         wx.PyEvent.__init__(self)
@@ -86,7 +86,7 @@ class TaskEvent(wx.PyEvent):
 
 
 class Watcher(threading.Thread):
-    ''' CThread to call a function in a loop
+    '''Thread to call a function in a loop
     '''
     def __init__(self, function, period=0.2):
         self.function = function

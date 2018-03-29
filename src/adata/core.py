@@ -1,6 +1,7 @@
 # adata.core
 '''
-Base class for adata applications.
+Helpers and base class for WX applications.
+
 
 '''
 import re 

@@ -7,13 +7,28 @@ import subprocess
 from mock import Mock
 sys.modules['wx'] = Mock()
 sys.modules['wx.adv'] = Mock()
+sys.modules['wx.stc'] = Mock()
 sys.modules['wx.lib'] = Mock()
 sys.modules['wx.lib.buttons'] = Mock()
 sys.modules['wx.lib.pubsub'] = Mock()
 sys.modules['wx.lib.masked'] = Mock()
 sys.modules['wx.lib.wordwrap'] = Mock()
 
+import wx
+from wx import adv, stc
 
+class WX: pass
+wx.App = WX
+wx.Event = WX
+wx.Frame = WX
+wx.Panel = WX
+wx.Window = WX
+wx.TextCtrl = WX
+wx.CheckBox = WX
+wx.ListBox = WX
+wx.ComboBox = WX
+wx.adv.DatePickerCtrl = WX
+wx.stc.StyledTextCtrl = WX
 
 
 project = u'Adata'
@@ -33,6 +48,9 @@ extensions = [
 sys.path.insert(0, os.path.abspath('../'))
 
 import adata
+import adata.gui.text
+import adata.window.main
+
 release = adata.__version__
 #release = '0.0.1'
 

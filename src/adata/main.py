@@ -1,5 +1,5 @@
 # adata.main
-''' Main adata application and console window
+''' Main Adata application initialize
 '''
 
 from .window.main import *

@@ -1,11 +1,10 @@
 # adata.cmd
-
 '''
-Interactive Interpreter
+Adata interactive interpreter
 
-.. seealso:: `cmd2 <https://cmd2.readthedocs.io/en/latest/unfreefeatures.html>`_
-
-
+.. seealso:: 
+    `the cmd2 interpreter <https://cmd2.readthedocs.io/en/latest/>`_, 
+    `python code library <https://docs.python.org/3/library/code.html>`_
 
 '''
 import os
@@ -99,9 +98,9 @@ class Commands(Cmd):
         '''Attach a interactive input handler to a Console instance.
 
         Try:
-         - 1. first word is cmd2: This interpreter - see help 
-         - 2. first word is a script: run the module
-         - 3. code: code.InteractiveInterpreter: python
+         - 1. first word is in help: This interpreter
+         - 2. first word is a script file: import
+         - 3. code: python standard code.InteractiveInterpreter
         
         :parameters:
             `console` : ``adata.gui.text.Console``

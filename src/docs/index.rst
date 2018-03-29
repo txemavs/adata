@@ -30,14 +30,15 @@ Modules
    :template: package.rst
  
    adata
+   adata.cmd
+   adata.core
    adata.main
+   adata.mqtt
    adata.pubsub
    adata.gui
    adata.gui.text
-   adata.cmd
    adata.tasks
    adata.websockets
-   adata.mqtt
    tests
    build
    
