@@ -174,9 +174,6 @@ a.headerlink:hover {
     color: white;
 }
  
-div.body p, div.body dd, div.body li {
-    line-height: 1.5em;
-}
  
 div.admonition p.admonition-title + p {
     display: inline;
@@ -230,7 +227,7 @@ tt {
 }
 
 h1 tt {
-    font-size: 1.1em;
+    font-size: 20px;
     font-weight: bold;
 }
 
@@ -299,6 +296,18 @@ dt {
     font-size: 1.2rem;
 }
 
-dl.class dl > dt {
-    font-size: 1.0rem;
+
+dl > dt {
+    font-size: 17px;
+    color:#0660b0;
+}
+
+dl.docutils > dt {
+    font-size: 14px;
+    color:#880000
+}
+
+.field dl > dt {
+    font-size: 16px;
+    color:#3d9b00;
 }
