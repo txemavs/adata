@@ -14,11 +14,22 @@ class Broker(object):
     ''' A MQTT broker connection
     '''
     def __init__(self, host, port=1883):
+        '''
+        '''
         self.host = host
         self.port = port
         self.client = mqtt.Client()
 
     def auth(self, user, password):
+        ''' Set credentials.
+
+        :param user: user
+        :type user: string
+        
+        :param password: password
+        :type password: string
+
+        '''
         self.client.username_pw_set(user, password)
 
 

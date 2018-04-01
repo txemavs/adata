@@ -41,13 +41,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
+    
+    win = None
 
-    def OnOpen(self, e):
-        print("TODO: Open a script")
+
 
 
     def OnPreInit(self):
-        ''' Create the top window and configure the application basics.
+        ''' Configure the application basics.
+        
+            - Create the top Window 
+            - Create a toolbar
+            - Prepare local file database
+
         '''
 
         self.win = Window(self)
@@ -63,41 +69,7 @@ SOFTWARE.
         for line in range(0,3): 
             self.win.console.Mark(line, 'blue_back')
 
-        # Create the Toolbar
-        self.tb = wx.ToolBar(self.win, -1, wx.DefaultPosition, wx.DefaultSize,
-                           wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT)
 
-        self.win.SetToolBar(self.tb)
-        
-        i=10
-        size = (24,24)
-        handler = {}
-        for bmp, label, call in [
-            ("ART_GO_DOWN","Forward",   self.win.console.OnGoDown),
-            ("ART_GO_UP","Back",        self.win.console.OnGoUp),
-            ("ART_MINUS","Smaller",     self.win.console.OnSmaller),
-            ("ART_PLUS","Bigger",       self.win.console.OnBigger),
-            ("ART_NORMAL_FILE","Wrap",  self.win.console.OnWrap),
-            (None, None, None),
-            ("ART_FOLDER","Open",       self.OnOpen),
-            (None, None, None),
-            ("ART_FIND","Search",       self.win.console.OnFind),
-            ("ART_GO_BACK","Back",      self.win.console.OnGoBack),
-            ("ART_GO_FORWARD","Forward",self.win.console.OnGoForward),   
-        ]:
-            if bmp is None:
-                self.tb.AddSeparator()
-                continue
-            art =  wx.ArtProvider.GetBitmap(getattr(wx, bmp), wx.ART_TOOLBAR, size)
-            self.tb.AddTool(i, label, art, shortHelp=label)
-            handler[i]=call
-            i+=1
-
-        def onTool(event):
-            handler[event.GetId()](event)
-
-        self.tb.Bind(wx.EVT_TOOL, onTool)
-        self.tb.Realize()
         self.InitConfig() 
         
         self.stdout = sys.stdout
@@ -109,6 +81,42 @@ SOFTWARE.
         self.InitDataBase()
 
        
+
+
+
+
+    def InitConfig(self):
+        '''Load application initial configuration.
+        '''
+        path = os.path.join(self.path["root"],"config.ini")
+        self.path["config"] = path
+        self.config = self.ConfigParser( path )    
+        self.system = self.ConfigDict(self.config, "SYSTEM")
+        self.language = self.config.get("SYSTEM", "language")
+        self.database = self.config.get("SYSTEM", "database")
+    
+        if "DEBUG" in self.system:  
+            self.debug = self.system["DEBUG"] 
+
+
+
+    def InitDataBase(self):
+        '''Create the local sqlite3 database for local user data.
+        '''
+        self.path["db"] = os.path.join(self.path["user"], self.database)
+        self.DB = DataBase(self.path["db"])
+        if len(self.DB.tables())==0: 
+            print("Creating new SQLite file: %s" % self.path["db"])
+            sql_start = os.path.join(self.path["data"],"database.sql")
+            with open(sql_start) as file:
+                structure = file.read()
+            for query in structure.split(";"): 
+                sql=""
+                for line in query.splitlines(): sql+=line
+                self.DB.query(sql)
+
+
+
 
     
     def OnInit(self): 

@@ -28,6 +28,9 @@ class TopWindow(wx.Frame):
     def UserInterface(self):
 
         ''' The usual layout is one scintilla text window
+
+            - Create a toolbar
+
         '''
         # Create the main STC widget
         self.console = Console(self, style=wx.NO_BORDER)
@@ -42,10 +45,48 @@ class TopWindow(wx.Frame):
         self.SetStatusBar(self.sb)
         self.Status(self.app.Copyright, console=False)
         
+
+
+        # Create the Toolbar
+        self.tb = wx.ToolBar(self, -1, wx.DefaultPosition, wx.DefaultSize,
+                           wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT)
+
+        self.SetToolBar(self.tb)
+        
+        i=10
+        size = (24,24)
+        handler = {}
+        for bmp, label, call in [
+            ("ART_GO_DOWN","Forward",   self.console.GoPromptHandler),
+            ("ART_GO_UP","Back",        self.console.GoPreviousMarker),
+            ("ART_MINUS","Smaller",     self.console.FontSmaller),
+            ("ART_PLUS","Bigger",       self.console.FontBigger),
+            ("ART_NORMAL_FILE","Wrap",  self.console.ToggleWrapMode),
+            (None, None, None),
+            ("ART_FOLDER","Open",       self.OnOpen),
+            (None, None, None),
+            ("ART_FIND","Search",       self.console.SearchBox),
+            ("ART_GO_BACK","Back",      self.console.SearchPreviousHandler),
+            ("ART_GO_FORWARD","Forward",self.console.SearchNextHandler),   
+        ]:
+            if bmp is None:
+                self.tb.AddSeparator()
+                continue
+            art =  wx.ArtProvider.GetBitmap(getattr(wx, bmp), wx.ART_TOOLBAR, size)
+            self.tb.AddTool(i, label, art, shortHelp=label)
+            handler[i]=call
+            i+=1
+
+        def onTool(event):
+            handler[event.GetId()](event)
+
         # Events
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_CLOSE, self.OnClose)
         pub.subscribe(self.OnEcho, 'app.echo')
+
+        self.tb.Bind(wx.EVT_TOOL, onTool)
+        self.tb.Realize()
 
 
     def Initialize(self): pass
@@ -133,6 +174,11 @@ class TopWindow(wx.Frame):
         wx.PostEvent(self, TaskEvent(text))
 
 
+
+    def OnOpen(self, e):
+        ''' TODO: Open a script
+        '''
+        print("TODO: Open a script")
 
 
     # .88b  d88. d88888b d8b   db db    db 

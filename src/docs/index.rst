@@ -1,6 +1,8 @@
 Adata documentation
 ===================
 
+*Under construction!*
+
 The purpose of this application is to handle events with custom python scripts. The main interface is an interactive python console with programmable commands and plug-in modules. It is based on a publisher/subscriber messaging pattern, so all the scripts can emit and listen to this event channels. 
 
 The application uses a Twisted internet reactor with a graphical user interface, to create a portable application including a python interpreter and a set of frozen python packages, mainly:

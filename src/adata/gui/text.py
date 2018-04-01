@@ -31,21 +31,13 @@ MARKERS = {
 
 
 
-
-# .d8888. d888888b db    db db      d88888b d8888b. d888888b d88888b db    db d888888b 
-# 88'  YP `~~88~~' `8b  d8' 88      88'     88  `8D `~~88~~' 88'     `8b  d8' `~~88~~' 
-# `8bo.      88     `8bd8'  88      88ooooo 88   88    88    88ooooo  `8bd8'     88    
-#   `Y8b.    88       88    88      88~~~~~ 88   88    88    88~~~~~  .dPYb.     88    
-# db   8D    88       88    88booo. 88.     88  .8D    88    88.     .8P  Y8.    88    
-# `8888Y'    YP       YP    Y88888P Y88888P Y8888D'    YP    Y88888P YP    YP    YP    
-
-
 class StyledText(stc.StyledTextCtrl):
     ''' 
-    Scintilla text control
+    Basic scintilla text control with styles, write and echo methods 
 
     See https://docs.wxpython.org/wx.stc.StyledTextCtrl.html
     '''
+
     _style_cache = [None]
 
 
@@ -101,8 +93,10 @@ class StyledText(stc.StyledTextCtrl):
 
 
     def __init__(self, *args, **kwargs):
+        '''Initialize stc.StyledTextCtrl and set marker and style specs.
 
-        
+        See stc.StyledTextCtrl documentation.
+        '''
         stc.StyledTextCtrl.__init__(self, *args, **kwargs)
 
         self.SetScrollWidthTracking(True)
@@ -147,7 +141,11 @@ class StyledText(stc.StyledTextCtrl):
 
 
 class Console(StyledText):
-    ''' Styled text window with input prompt.
+    '''stc.StyledTextCtrl Styled text window with an input prompt.
+
+        :param args: ``wx.stc.StyledTextCtrl``
+        :type args: parameters
+
     '''
 
     __history = []
@@ -188,8 +186,12 @@ class Console(StyledText):
 
 
 
-
-    def GotoPrompt(self, text=None):
+    def GoPrompt(self, text=None):
+        '''Move cursor to propmt and optionally set the command text
+        
+        :param text: Optional command
+        :type text: string
+        '''
         line = self.MarkerLineFromHandle(self.marker["prompt"])
         pos = self.GetLineIndentPosition(line)+len(self.prompt)
         self.GotoPos( pos )
@@ -199,81 +201,29 @@ class Console(StyledText):
                 self.AddText(text)
 
 
-    def OnWrap(self, e):
-        self.SetWrapMode( not self.GetWrapMode() )
-
-
-    def OnSmaller(self, e): 
-        self.__zoom-=1
-        self.SetZoom(self.__zoom)
-
-
-    def OnBigger(self, e): 
-        self.__zoom+=1
-        self.SetZoom(self.__zoom)
-
-
-    def OnGoUp(self, e): 
-        self.GotoLine( self.MarkerPrevious( self.GetCurrentLine()-1, 0xFF ) )
-
-
-    def OnGoDown(self, e):
-        self.GotoLine( self.MarkerLineFromHandle( self.marker["prompt"] ) )
-        self.LineEnd()
-
-    def OnFind(self, e):
-        dialog = wx.TextEntryDialog( None, "Search", "Find", self.__find )
-        dialog.ShowModal()
-        value = dialog.GetValue()
-        if value=="": return
-        self.__find = value
-        self.CharRight()
-        self.SearchAnchor()
-        self.SearchNext(0xFF, value)
-
-
-    def OnGoBack(self, e): 
-        if self.__find=="": return
-        self.CharLeft()
-        self.SearchAnchor()
-        self.SearchPrev(0xFF, self.__find)
-        self.EnsureCaretVisible()
-
-    def OnGoForward(self, e):
-        if self.__find=="": return
-        self.CharRight()
-        self.SearchAnchor()
-        self.SearchNext(0xFF, self.__find)
-        self.EnsureCaretVisible()
-  
-
-    def Mark(self, line, icon):
-        if not icon in self.mark_number.keys(): return
-        return self.MarkerAdd(line, self.mark_number[icon])
-    
-
-
-
-
-
-
-    # d88888b d8b   db d888888b d88888b d8888b. 
-    # 88'     888o  88 `~~88~~' 88'     88  `8D 
-    # 88ooooo 88V8o 88    88    88ooooo 88oobY' 
-    # 88~~~~~ 88 V8o88    88    88~~~~~ 88`8b   
-    # 88.     88  V888    88    88.     88 `88. 
-    # Y88888P VP   V8P    YP    Y88888P 88   YD 
-
 
     def Enter(self, cmd):
-        ''' Send code to interpreter  
+        '''Override to send code somewhere 
+        
+        :param cmd:  A command line.
+        :type cmd: string
         ''' 
-        raise Exception("Not implemented - Must override")
+        raise Exception("Not implemented - You must override me")
 
 
 
     def OnKeyDown(self, event):
+        '''Key pressed event handler
 
+        If line is not prompt, does nothing. Else:
+
+            - Avoid prompt symbol modification
+            - Up / Down to navigate history
+            - Send code on Enter
+
+        :param event:  Required event information.
+        :type event: ``wx.Event``
+        '''
         line_current = self.GetCurrentLine()
         line_prompt = self.MarkerLineFromHandle(self.marker["prompt"])
 
@@ -284,7 +234,7 @@ class Console(StyledText):
         pos = self.GetCurrentPos()
 
         if pos-pos_prompt<len(self.prompt): # U can't touch this
-            self.GotoPrompt()
+            self.GoPrompt()
             return 
 
         keycode = event.GetKeyCode()
@@ -302,7 +252,7 @@ class Console(StyledText):
             
             self.echo()
             self.echo(self.prompt+cmd,"fore:#ffff00,bold")
-            self.GotoPrompt('')
+            self.GoPrompt('')
             self.__history.insert(0, cmd)
             self.__history_index = -1
             self.Enter(cmd)
@@ -319,8 +269,137 @@ class Console(StyledText):
             
             if self.__history_index<0: return
 
-            self.GotoPrompt( self.__history[self.__history_index] )
+            self.GoPrompt( self.__history[self.__history_index] )
             return
 
         event.Skip()
             
+
+
+
+
+
+
+    def ToggleWrapMode(self, event=None):
+        '''Toggle text wrap mode
+
+        :param event: Optional
+        :type event: ``wx.Event``
+        :return: self.GetWrapMode
+        :rtype: boolean
+        '''
+        state = not self.GetWrapMode()
+        self.SetWrapMode( state )
+        return state
+
+
+    def FontSmaller(self, e=None): 
+        '''Toggle text wrap mode
+
+        :param event: Optional
+        :type event: ``wx.Event``
+        :return: zoom level
+        :rtype: int
+        '''
+        self.__zoom -= 1
+        self.SetZoom( self.__zoom )
+        return self.__zoom
+
+    def FontBigger(self, e=None): 
+        '''Toggle text wrap mode
+
+        :param event: Optional
+        :type event: ``wx.Event``
+        :return: zoom level
+        :rtype: int
+        '''
+        self.__zoom += 1
+        self.SetZoom( self.__zoom )
+        return self.__zoom
+
+
+    def GoPreviousMarker(self, e=None): 
+        '''Go to previous marker
+
+        :param event: Optional
+        :type event: ``wx.Event``
+        :return: zoom level
+        :rtype: int
+        '''
+        self.GotoLine( self.MarkerPrevious( self.GetCurrentLine()-1, 0xFF ) )
+
+
+    def GoPromptHandler(self, e):
+        '''Go to prompt *****
+
+        :param event: Optional
+        :type event: ``wx.Event``
+        :return: line
+        :rtype: int
+        '''
+        line = self.MarkerLineFromHandle( self.marker["prompt"] )
+        self.GotoLine( line )
+        self.LineEnd()
+        return line
+
+
+    def SearchBox(self, e=None):
+        '''Find text
+
+        :param event: Optional
+        :type event: ``wx.Event``
+        '''
+        dialog = wx.TextEntryDialog( None, "Search", "Find", self.__find )
+        dialog.ShowModal()
+        value = dialog.GetValue()
+        if value=="": return
+        self.__find = value
+        self.CharRight()
+        self.SearchAnchor()
+        self.SearchNext(0xFF, value)
+
+
+    def SearchPreviousHandler(self, e=None): 
+        '''Search previous occurence
+
+        :param event: Optional
+        :type event: ``wx.Event``
+        '''
+        if self.__find=="": return
+        self.CharLeft()
+        self.SearchAnchor()
+        self.SearchPrev(0xFF, self.__find)
+        self.EnsureCaretVisible()
+
+
+
+    def SearchNextHandler(self, e=None):
+        '''Search next occurence
+
+        :param event: Optional
+        :type event: ``wx.Event``
+        '''
+        if self.__find=="": return
+        self.CharRight()
+        self.SearchAnchor()
+        self.SearchNext(0xFF, self.__find)
+        self.EnsureCaretVisible()
+
+  
+
+    def Mark(self, line, icon):
+        '''Set marker 
+
+        :param line: Line number
+        :type line: int
+        :param icon: mark_number dictionary key
+        :type icon: string
+        :return: Marker ID
+        :rtype: int
+        '''        
+        if not icon in self.mark_number.keys(): return
+        return self.MarkerAdd(line, self.mark_number[icon])
+    
+
+
+

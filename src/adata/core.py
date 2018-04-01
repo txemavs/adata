@@ -328,38 +328,6 @@ class Application(wx.App):
             data[name.upper()] = v
         return data
 
-
-    def InitConfig(self):
-        '''Load application initial configuration.
-        '''
-        path = os.path.join(self.path["root"],"config.ini")
-        self.path["config"] = path
-        self.config = self.ConfigParser( path )    
-        self.system = self.ConfigDict(self.config, "SYSTEM")
-        self.language = self.config.get("SYSTEM", "language")
-        self.database = self.config.get("SYSTEM", "database")
-    
-        if "DEBUG" in self.system:  
-            self.debug = self.system["DEBUG"] 
-
-
-
-    def InitDataBase(self):
-        '''Create the local sqlite3 database for local user data.
-        '''
-        self.path["db"] = os.path.join(self.path["user"], self.database)
-        self.DB = DataBase(self.path["db"])
-        if len(self.DB.tables())==0: 
-            print("Creating new SQLite file: %s" % self.path["db"])
-            sql_start = os.path.join(self.path["data"],"database.sql")
-            with open(sql_start) as file:
-                structure = file.read()
-            for query in structure.split(";"): 
-                sql=""
-                for line in query.splitlines(): sql+=line
-                self.DB.query(sql)
-
-
     def About(self, evt):
         '''Display the About box
         '''

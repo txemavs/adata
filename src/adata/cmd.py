@@ -28,9 +28,8 @@ class Interpreter(code.InteractiveInterpreter):
     def write(self, text):
         '''Adata override: pubsub event send.
         
-        :parameters:
-            `text` : string
-                Output.
+        :param text: Output
+        :type line: string
         '''
         echo(text)
                      
@@ -51,9 +50,8 @@ class Commands(Cmd):
     def __init__(self, app):
         '''Create a cmd2 interpreter.
 
-        :parameters:
-            `app` : ``adata.core.Application``
-                The main application.
+        :param app: The main application.
+        :type app: ``adata.core.Application``
         '''
         env = {
             'app': app,
@@ -97,26 +95,22 @@ class Commands(Cmd):
     def Prompt(self, console):
         '''Attach a interactive input handler to a Console instance.
 
-        Try:
-         - 1. first word is in help: This interpreter
-         - 2. first word is a script file: import
-         - 3. code: python standard code.InteractiveInterpreter
-        
-        :parameters:
-            `console` : ``adata.gui.text.Console``
-                The console.
-        
+        Handler resolve order:
+           1. first word is a command listed in help: This cmd2 do method
+           2. first word is a script file: import or reload
+           3. else: python standard code.InteractiveInterpreter
+
+        :param console: The console.
+        :type console: ``adata.gui.text.Console``
         :return: self
         :rtype: `Commands`
         '''
 
         def handler(cmd): 
-            ''' 
-            Console.Enter handler (Commands class overriden)
+            '''Console.Enter handler ( override Commands class method )
             
-            :parameters:
-                `cmd` : string
-                    A command line.
+            :param cmd: A command line.
+            :type cmd: string
             '''
 
             if cmd=="help()": cmd = "import this" 
@@ -193,10 +187,8 @@ class Commands(Cmd):
     def do_module(self, name):
         '''Load or reload a module.
 
-        :parameters:
-            `name` : string
-                Module name
-
+        :param cmd: Module name.
+        :type cmd: string
         :return: Module imported without errors
         :rtype: bool
 
