@@ -21,6 +21,7 @@ import webbrowser
 
 from wx import adv 
 from .cmd import *
+from .functions import *
 from .gui import *
 from .tasks import *
 from .pubsub import *
@@ -257,7 +258,7 @@ class Application(wx.App):
         favicon = os.path.join(self.path["www"],"favicon.ico")
         self.icon = wx.Icon(favicon,  wx.BITMAP_TYPE_ICO)
         
-        self.file_log_name = os.path.join(self.path["log"],filestamp()+".txt")
+        self.file_log_name = os.path.join(self.path["log"], filestamp()+".txt")
         #self.echo("Log %s" % self.file_log_name)
         self.file_log = open(self.file_log_name,"a")
         self.file_log_size = os.stat(self.file_log_name).st_size

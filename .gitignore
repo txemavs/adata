@@ -7,10 +7,11 @@
 /src/data/www/documentation/.doctrees
 /src/data/www/documentation/_sources
 
-
 /src/*.bat
 /src/modules/*
 !/src/modules/README.txt 
+
+_build/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

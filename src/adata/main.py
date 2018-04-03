@@ -51,7 +51,7 @@ SOFTWARE.
         ''' Configure the application basics.
         
             - Create the top Window 
-            - Create a toolbar
+            
             - Prepare local file database
 
         '''
