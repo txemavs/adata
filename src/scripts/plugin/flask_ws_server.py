@@ -1,0 +1,251 @@
+''' Example: A Flask / static files / ws server
+
+
+'''
+import os
+import wx
+import webbrowser
+import jinja2
+from adata.core import Module
+from adata.pubsub import echo, pub, publish
+from adata.service import WSGIRoot, WebSocketProtocol, WebSocketService
+
+from twisted.internet import reactor
+from twisted.web.server import Site
+from twisted.web.static import File
+from twisted.web.wsgi import WSGIResource
+from flask import Flask, session, redirect, url_for, escape, request, render_template
+from autobahn.twisted.websocket import WebSocketServerFactory
+from autobahn.twisted.resource import WebSocketResource
+
+
+PORT = 8080
+
+
+
+class Define(Module):
+    '''A web remote control
+    '''
+    name = "flask_ws_example"
+    menu = "Service"
+
+    def run(self):
+        try:
+            ws = Server()
+        except Exception as error:
+            if "WinError 10048" in "%s" % error: #idk better
+                echo("Websockets: Port %s is not available" % (PORT), 
+                    "ff0000", marker="websocket_server", icon='red_circle')
+            else:
+                raise error
+
+    def menuitem(self):
+        return {
+                'name': "Flask web server", 
+                'help': "Port %s" % PORT
+            }
+
+
+
+
+class Protocol(WebSocketProtocol):
+    ''' 
+    Custom protocol
+    Every client has one protocol instance
+    
+    If a event handler returns true, publish it
+    '''
+    status = {}
+
+
+    def status_update(self):
+        self.status["clients"]=len(self.connections)
+        return self.status
+
+    def OnClientMessage(self, data, isBinary):
+        ''' New message event received
+        '''        
+
+        number = self.connections.index(self)
+        
+        echo("client.%s: " % (number), "0088ff", lf=False, icon="blue_arrow")
+        echo("%s" % ( data.decode('utf-8')) )
+
+        reply = {
+            "conn": number,
+            "type":"protocol"
+        }
+        
+        # Update request response for one client
+        if data==b'update':
+            reply["status"] = self.status_update()
+            echo("update: %s" % reply )
+            response = Protocol.JSON(reply)
+            self.sendMessage(response)
+            return
+
+        # Set a status key value pair
+        word = data.split(b' ')
+        if len(word)>2 and word[0]==b'set':
+            key = word[1].decode('utf-8')
+            val = word[2].decode('utf-8')
+            self.status[ key ] = val
+            echo(repr(self.status))
+            Protocol.Broadcast({
+                "status": self.status_update(),
+                "type": "update"
+            })
+            return
+        
+        # Else is a chat message
+        response = Protocol.JSON(reply)
+        self.sendMessage(response)
+
+        
+        Protocol.Broadcast({
+            "conn": number,
+            "msg": data.decode('utf-8'),
+            "type": "chat"
+        })
+    
+
+        # Local
+        publish(self.topic, data=response)
+        return True
+
+
+
+
+
+def webapp(templates):
+    '''
+    '''
+
+    app = Flask("Adata")
+    app.secret_key = os.urandom(24)
+
+    #Set custom templates folder
+    loader = jinja2.ChoiceLoader([
+        jinja2.FileSystemLoader([templates]),
+        app.jinja_loader,
+    ])
+    app.jinja_loader = loader
+
+
+    @app.route('/')
+    def index():
+        echo("Request index")
+        name = escape(session['username']) if 'username' in session else "?" 
+        return render_template('index.html', name=name)
+
+
+    @app.route('/remote')
+    @app.route('/remote/<name>')
+    def remote(name=None):
+        echo("Request remote")
+        title="Adata remote"
+        return render_template('remote.html', title = title)
+
+
+    @app.route('/login', methods=['GET', 'POST'])
+    def login():
+        if request.method == 'POST':
+            session['username'] = request.form['username']
+            return redirect(url_for('index'))
+        return '''
+            <form method="post">
+                <p><input type=text name=username>
+                <p><input type=submit value=Login>
+            </form>
+        '''
+
+
+    @app.route('/logout')
+    def logout():
+        # remove the username from the session if it's there
+        session.pop('username', None)
+        return redirect(url_for('index'))
+
+
+
+    return app
+
+
+
+
+
+class Server(WebSocketService):
+    ''' Creates the WS server
+    '''
+
+
+    def __init__(self, port=PORT):
+        ''' Start protocol factory and reactor
+        '''
+        #self.io_control()
+        
+        self.app = wx.GetApp()
+        ip = self.app.IP
+        self.ip = "127.0.0.1" if ip is None else ip
+        self.port = port
+        self.url = "ws://%s:%s" % (self.ip, self.port)
+
+        # Set Protocol factory
+        self.factory = WebSocketServerFactory(self.url)
+        self.factory.protocol = Protocol
+       
+        self.root = WSGIRoot()
+        self.root.WSGI = WSGIResource( 
+            reactor, 
+            reactor.getThreadPool(), 
+            webapp(templates = os.path.join(self.app.path['data'], 'templates') ) 
+        )
+        self.root.putChild(b"ws", WebSocketResource(self.factory) )
+        
+        static = File( os.path.join(self.app.path['www'], 'static') )
+        self.root.putChild(b"static", static )
+        # Only one File
+        #self.root.putChild(b"documentation", File( os.path.join(self.app.path['www'], 'documentation') ) )
+
+        self.site = Site( self.root )
+
+        # Use the existing reactor        
+        reactor.listenTCP( self.port, self.site )
+        
+        echo("Web Server: Starting at %s" % self.root)
+        echo("Websockets Server: Starting at %s" % self.url)
+        self.Logger()
+
+        topic = "ws.local"
+        self.SetTopic(topic)
+        
+
+        pub.subscribe(self.Broadcast, topic+".broadcast")
+        pub.subscribe(self.Receive, topic)
+        echo("pubsub: listening %s" % topic, "ff8800")
+
+
+    def Broadcast(self, data):
+        Protocol.Broadcast(data)
+
+
+    def Receive(self, data=None):
+        key = data['key']
+        number = Protocol.keys.index(key)
+        #conn = Protocol.connections[number]
+
+        echo("client.%s: " % number, "FF8800", lf=False, icon="dots")
+        echo("%s" % data['data'])
+
+
+
+
+
+
+
+
+
+
+
+
+

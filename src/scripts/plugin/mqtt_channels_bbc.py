@@ -13,7 +13,7 @@ class Define(Module):
         broker = Broker("test.mosquitto.org", 1883)
         broker.app = self.app
         broker.subscribe("bbc/subtitles/bbc_one_london/#")
-
+        
     def menuitem(self):
         return {
             'name': "MQTT Example - BBC1", 

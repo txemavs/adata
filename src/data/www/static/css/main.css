@@ -1,0 +1,644 @@
+* {
+    padding: 0px;
+    border: 0px solid black;
+    margin: 0px;
+    outline: 0px;
+    border-spacing: 0px;
+    border-collapse: separate;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    color: #ddd;
+    font-size: 22px;
+    background-color: #112;
+}
+
+
+
+html {
+    font-family: 'Helvetica';
+}
+
+div.page,
+div.header-container {
+    position: relative;
+    min-width: 320px;
+    width: 100%;
+}
+
+div.page {
+    font-size: 1em;
+    transition: all 0.5s ease;
+    min-height: 100%;
+    height:100%;
+}
+
+div.header {
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+    top: 0px;
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    overflow: hidden;
+    z-index: 10000;
+    transition: all 0.2s ease;
+}
+
+div.header.full-screen {
+    height: 0px;
+}
+
+div.header-container {
+    height:100%;
+    margin:0;
+    transition: all 0.5s ease;
+}
+
+div.panel-wrap {
+    height:100%;
+    width:100%;
+    margin:0;
+    position:absolute;
+    top:0;
+    overflow: hidden;    
+}
+
+div.panel {
+    background:rgba(0,0,0,0.1);
+    height:100%;
+    margin:0;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    overflow: hidden;    
+}
+
+
+div.panel-top {
+    flex: 0 1 50px; /* Change 80px if diff needed, it is the basis parameter. It means that the base height will be 100px before growing or shrinking. */
+}
+div.panel-middle {
+    flex:1024 0;
+    overflow: auto;
+}
+div.panel-bottom {
+    flex:1 0 0px;
+}
+    /* icons & icon buttons */
+
+div.button.settings-button {
+    border: 1px solid transparent;
+    vertical-align: middle;
+    /*background-image: url(../img/top-bar-buttons.svg);*/
+    background-size: cover;
+    width: 48px;
+    height: 48px;
+    transition: transform 0.1s linear;    
+    transform: rotate(270deg);
+}
+
+div.button.settings-button i {
+    font-size:32px;
+    line-height:42px;
+    vertical-align: middle;
+    background-size: cover;
+    padding:4px;
+}
+
+div.settings-top-bar.open div.button.settings-button {
+    transform: rotate(0deg);
+}
+
+
+div.logo {
+    float: right;
+    display: inline-block;
+    white-space: nowrap;
+    opacity: 0.86;
+}
+
+span.logo {
+    color: white;
+    vertical-align: middle;
+    font-size: 27px;
+    font-weight: bold;
+    position: relative;
+    padding:0 10px;
+}
+
+img.logo {
+    width: 36px;
+    height: 36px;
+    padding: 7px 3px;
+    vertical-align: middle;
+}
+
+img.background-logo {
+    position: absolute;
+    width: 30%;
+    left: 35%;
+    top: 10em;
+    opacity: 0.03;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+
+
+
+
+
+
+select,
+input[type=text],
+input[type=password],
+textarea {
+    box-sizing: border-box;
+}
+
+
+
+input[type=checkbox].styled {
+    display: none;
+}
+
+a {
+    color: #ff0;
+    cursor: pointer;
+    text-decoration: inherit;
+}
+
+
+div.button {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    display: inline-block;    
+}
+
+
+div.check-box {
+    display: inline-block;
+    position: relative;
+    width: 64px;
+    height: 32px;
+    border: 1px solid #888;
+    color: #aaaaaa;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    margin: 2px;
+    transition: all 0.2s ease;
+}
+
+
+div.check-box-button {
+    width: 50%;
+    height: 100%;
+    left: 0px;
+    background-color: #800;
+    color: #aaaaaa;
+    position: absolute;
+    text-align: center;
+    line-height: 30px;
+    transition: all 0.1s ease;
+}
+
+span.check-box-text {
+    font-size: 14px;
+    font-weight: bold;
+    vertical-align: top;
+}
+
+div.check-box.on div.check-box-button {
+    left: 50%;
+    background-color: #080;
+    color: white;
+}
+
+
+
+    /* input boxes */
+
+input[type=password].styled,
+input[type=text].styled,
+textarea.styled {
+    width: 90%;
+    border: 1px solid #317CAD;
+    border-radius: 2px;
+    background-color: transparent;
+    padding: 1px;
+    color: #dddddd;
+    font-family: inherit;
+    font-size: 0.8em;
+    margin: 2px;
+    transition: all 0.1s ease;
+    resize: none;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+textarea.styled {
+    white-space: pre;
+}
+
+input[type=password].styled:FOCUS,
+input[type=text].styled:FOCUS,
+textarea.styled:FOCUS {
+    background-color: #414141;
+}
+
+input[type=password].styled:HOVER,
+input[type=password].styled:FOCUS,
+input[type=text].styled:HOVER,
+input[type=text].styled:FOCUS,
+textarea.styled:HOVER,
+textarea.styled:FOCUS {
+    border-color: #3498db;
+    color: white;
+}
+
+input[type=text].number {
+    width: 5em;
+}
+
+input[type=text].error,
+input[type=password].error,
+input[type=file].error,
+select.error {
+    background-image: url(../img/validation-error.svg) !important;
+    background-position: center right;
+    background-repeat: no-repeat;
+}
+
+input[type=text].time {
+    width: 3.5em;
+}
+
+input[readonly] {
+    border: 1px solid #555 !important;
+}
+
+
+    /* combo box */
+
+select.styled {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 90%;
+    border: 1px solid #317CAD;
+    border-radius: 2px;
+    background-color: transparent;
+    padding: 1px 1.25em 1px 1px;
+    color: #dddddd;
+    font-family: inherit;
+    font-size: 0.8em;
+    margin: 2px;
+    background-image: url(../img/combo-box-arrow.svg);
+    background-repeat: no-repeat;
+    background-position: right center;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+
+.ff select.styled {
+    background-image: none;
+    padding-right: 1px;
+}
+
+
+
+
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 11.8px 0;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: #3071a9;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+}
+input[type=range]::-webkit-slider-thumb {
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  border: 1px solid #000000;
+  height: 32px;
+  width: 30px;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -12px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #367ebd;
+}
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: #3071a9;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+}
+input[type=range]::-moz-range-thumb {
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  border: 1px solid #000000;
+  height: 32px;
+  width: 30px;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+}
+input[type=range]::-ms-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: #2a6495;
+  border: 0.2px solid #010101;
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+input[type=range]::-ms-fill-upper {
+  background: #3071a9;
+  border: 0.2px solid #010101;
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+input[type=range]::-ms-thumb {
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  border: 1px solid #000000;
+  height: 32px;
+  width: 30px;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+  height: 8.4px;
+}
+
+
+
+    /* basic */
+
+
+
+
+
+
+
+
+
+div.hostname {
+    vertical-align: middle;
+    display: inline-block;
+    font-size: 27px;
+}
+
+.logo div.hostname {
+    vertical-align: top;
+    background:black;
+    margin-top:2px;
+    padding:10px;
+    line-height: 27px;
+    display: inline-block;
+    font-size: 27px;
+}
+
+
+    /* settings */
+
+div.settings {
+    background-color: rgba(32,32,32,0.8);
+    position: fixed;
+    z-index: 2;
+    top: 50px;
+    right: 0px;
+    width: 0px;
+    bottom: 0px;
+    transition: all 0.2s ease;
+    overflow: auto;
+}
+
+div.settings.open {
+    width: 480px;
+}
+
+div.settings-container {
+    position: relative;
+    padding-top: 10px;
+    display: none;
+    white-space: nowrap;
+}
+
+div.settings.open div.settings-container {
+    display: block;
+}
+
+div.settings-progress {
+    position: absolute;
+    top: 0px;
+    width: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0;
+    transition: opacity 0.1s linear;
+}
+
+div.settings-top-bar {
+    position: relative;
+    display: inline-block;
+    width: 40%;
+    height: 50px;
+}
+
+div.settings-top-bar.open {
+    min-width: 360px;
+}
+
+div.settings-top-bar.closed div.apply-button {
+    display: none !important;
+}
+
+div.settings-section-title {
+    position: relative;
+    background-color: rgba(100, 100, 100, 0.3);
+    padding: 5px 0.5em 5px 5px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+a.settings-section-title {
+}
+
+table.settings {
+    width: 100%;
+    padding: 3px;
+    cellspacing:2px;
+}
+
+table.settings tr:nth-child(even) {
+    background:rgba(0,0,0,0.1);
+}
+
+table.settings td {
+    padding: 1px;
+}
+
+td.settings-item-label {
+    width: 50%;
+    text-align: left;
+}
+
+td.settings-item-label span{
+    margin-right: 10px;
+    margin-left: 20px;
+    
+}
+
+td.settings-item-value .styled{
+    margin-left: 10px;
+    margin-right: 10px;
+    
+}
+
+
+td.settings-item-value {
+    width: 50%;
+    text-align: center;
+    padding-left: 15px;
+}
+
+span.settings-item-label {
+     font-size: 0.9em;
+}
+
+span.settings-item-unit {
+    font-size: 0.6em;
+    padding: 0px 0.2em;
+}
+
+div.settings-item-separator {
+    height: 1px;
+    border-top: 1px solid #414141;
+    margin: 0.5em 1em;
+}
+
+
+div.normal-button {
+    position: relative;
+    height: 1.5em;
+    line-height: 1.5em;
+    text-align: center;
+    margin: 2px 0px;
+    color: white;
+    font-size: 0.9em;
+    border-radius: 3px;
+    transition: all 0.1s linear;
+    width: 7em;
+}
+
+
+
+
+
+div.hidden,
+tr.hidden {
+    display: none !important;
+}
+
+
+
+
+    /* media queries */
+
+
+
+@media all and (max-width: 600px) {
+    /* very small screens (older phones) */
+    
+    
+    div.settings.open {
+        width: 100%;
+    }
+
+    div.settings-top-bar.open {
+        width: 100%;
+    }
+}
+
+
+
+
+
+div.console {
+    width: 100%;
+    height: 100%;
+
+}
+
+#output {
+    font-size: 16px;
+    overflow: auto;
+}
+
+@media all and (max-width: 500px) {   
+    #output { font-size: 10px;}
+}
+
+@media all and (min-width: 500px) and (max-width: 850px) {    
+    #output { font-size: 12px; }
+}
+@media all and (min-width: 850px) and (max-width: 1100px) {    
+    #output { font-size: 14px; }
+}
+@media all and (min-width: 1100px) and (max-width: 1400px) {    
+    #output { font-size: 15px; }
+}
+
+
+
+
+#cmd_line{
+    color:#ff0;
+    
+}
+#input {
+        color:#ff0;
+    width:100%;
+    background:transparent;
+    font-family: Courier;
+     font-size: 16px !important;
+}
+
+
+.fa-x-big {
+    font-size:32px;
+    margin-top:10px;
+    padding:0;
+}

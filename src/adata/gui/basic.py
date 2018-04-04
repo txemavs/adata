@@ -11,8 +11,6 @@ import sys
 import time
 import datetime
 import platform
-
-
 import wx
 import wx.lib.buttons as buttons
 import wx.lib.masked as masked

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ title }}</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="mobile-web-app-capable" content="yes">
+        <link rel="shortcut icon" href="/static/favicon.ico" />
+        <link rel="apple-touch-icon" href="/static/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel='stylesheet' type='text/css' href='/static/css/font-awesome.min.css'>
+        <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+        <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    </head>
+    <body>
+        <div class="header">
+            <div class="header-container">
+                <div>
+                    <div class="settings-top-bar">
+                        <div class="button icon settings-button mouse-effect" title="settings"><i class="fa fa-fw fa-gear"></i></div>
+                        <span class="logo">{{ title }}</span>
+                    </div>
+                    <div class="logo">
+                        <a href=""><span class="logo"><i class="fa fa-x-big fa-bars"></i></span></a>
+                        <a href=""><span class="logo"><i class="fa fa-x-big fa-chevron-left"></i></span></a>
+                        <a href=""><span class="logo"><i class="fa fa-x-big fa-chevron-right"></i></span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="page">
+            <div class="settings open">
+                <div class="settings-container">
+                    <div class="settings-section-title" id="testDiv">
+                        <a class="settings-section-title"> Control </a>
+                    </div>
+                    <table id="control" class="settings">
+                        
+                    </table>
+                    <div class="settings-progress"></div>
+                </div>
+            </div>
+            <img class="background-logo" src="/static/background.png" onmousedown="return false;">
+            <div class="page-container"></div>
+            
+            <div class="panel-wrap"><div class="panel">
+                <div class='panel-top'>
+                   
+                </div>
+                <div id = 'console_scroll' class='panel-middle'>
+                    <pre id="output"></pre>
+                </div>
+                <div class='panel-bottom'>
+                    <div id="cmd_line"><table><tr><td width="32px" align="center">
+                        &gt;&gt;&gt;
+                    </td><td><input id="input" /></td></tr></table></div>
+                </div>
+            </div></div>
+        </div>
+        
+        <div class="modal-glass"></div>
+        <div class="modal-container"></div>
+        <div class="popup-message-container"></div>
+
+<script type="text/javascript">$( document ).ready(function() {
+
+    var status = {}
+    var output = $("#output");
+    var input = $("#input")
+
+    log = function (data, color="#EEE", icon = "dot") {
+        if (typeof data == "string") {
+            msg = '<span><i class="fa fa-fw fa-'+icon+'"></i></span> ' + data;
+        } else {
+            if (data.hasOwnProperty("type")) {
+                if (data["type"]=="response") {icon = "play"; color="white"}
+                if (data["type"]=="update") {icon="play";color="orange";}
+                if (data["type"]=="broadcast") {icon="play-circle";color="#4f4"}
+                if (data["type"]=="error") {icon="warning";color="red"}
+            }
+            msg = '<span style="color:#'+color+'"><i class="fa fa-fw fa-'+icon+'"></i></span> ' + JSON.stringify(data);
+        }
+        output.append('<span style="color:'+color+'">'+msg+'\n</span>')
+        $("#console_scroll").scrollTop($("#output").height());
+    };
+
+
+    var ws = new WebSocket("ws://"+window.location.host+"/ws");
+
+    
+    input.keyup( function (e) { if (e.keyCode == 13) { 
+        input_text = input.val();
+        log(input_text,"yellow", "play fa-flip-horizontal")
+        ws.send(input_text);
+        e.preventDefault()
+    }});
+
+    $(window).resize(function () {
+        //app.updateLayout();
+    });
+
+    log("Boot: OK","#AAA","square-o");
+
+
+
+    function create_slider(parent, number) {
+        var name = "status_range"+number
+        var x = '<tr class="settings-item">'+
+                '<td class="settings-item-label"><span class="settings-item-label">Range '+number+'</span></td>'+
+                '<td class="settings-item-value">'+
+                '<input type="range" min="1" max="64" value="8" class="slider" id="'+name+'">'+
+                '</td>'+
+                '</tr>'
+            parent.append(x)
+                            
+        var $range = $('#'+name);                   
+                                      
+        function change() {
+            ws.send("set range"+number+" "+ $range.val() );
+            //broadcast will do update()
+        }
+        $range.change(change);
+                            
+        function update(value) {
+            if (value) {
+                 $range.val(value)
+           }
+        }
+                
+        $range[0].update = update;
+    }
+
+
+
+    function create_switch(parent, number) {
+        var name = "status_sw"+number
+        var x = '<tr class="settings-item">'+
+                '<td class="settings-item-label"><span class="settings-item-label">Switch ' + number+ '</span></td>'+
+                '<td class="settings-item-value">'+
+                '<input type="checkbox" class="styled prefs" id="'+ name+'"></td>'+
+                '</tr>'
+        parent.append(x)
+        
+        var $check = $('#'+name);
+        var check = $check[0]
+        var div = $('<div class="check-box"></div>');
+        var but = $('<div class="check-box-button"></div>');
+        var txt = $('<span class="check-box-text"><span>')
+        
+        div.append(but);
+        but.append(txt);
+        div[0].className += ' ' + check.className;
+        div[0].tabIndex = 0;
+        
+        $check.after(div);
+        
+        div.click(function () {
+            check.checked = !check.checked;
+            $check.change();
+        });
+        
+        
+        div.keydown(function (e) {
+            if (e.which === 13 || e.which === 32) {
+                check.checked = !check.checked;
+                $check.change();        
+                return false;
+            }
+        });
+        
+
+        function update(value) {
+            if (value) {
+                this.checked = value=="1"
+            }
+            if (this.checked) {
+                div.addClass('on');
+                txt.html('I');
+            } else {
+                div.removeClass('on');
+                txt.html('O');
+            }
+        }
+        
+        update()
+        check.update = update;
+
+        function change() {
+            var high = this.checked ? "1":"0"
+            ws.send("set sw"+number+" "+high);
+            //broadcast will do update()
+        }
+        $check.change(change);
+
+    }
+
+
+    var control = $("#control")
+    
+    for (i=0;i<4;i++) {
+        create_slider(control, i)
+        create_switch(control, i)
+    }
+
+
+
+    updateUI = function() {
+        
+        $.each(status, function( index, value ) {
+            log( index + ": " + value );
+            $('#status_'+index).each( function() {
+
+                this.update(value)
+            })
+        });
+        
+    }
+
+
+
+
+    ws.onmessage = function (event) {
+        //console.log(event)
+        data = JSON.parse(event.data)
+
+        if (data.hasOwnProperty("status")) {
+            $.extend(status, data.status)
+            updateUI()
+        } else {
+            log(data)
+        }
+
+    };
+
+
+
+
+
+
+    ws.onopen = function (event) {
+        log('Connected to service',"#4F4","circle");
+        ws.send("update");
+    }
+
+
+    ws.onclose = function(event) {
+        if (event.code == 1000) { log('Disconnected!'); }
+        else if (event.code == 1006) { log('Service not found!',"red","warning");
+        } else { log('Service connection error '+ event.code,"red","warning");}
+        ws = null;
+    };
+
+    ws.error = function (event) {
+        if (ws.readyState == 1) {
+            log('ws error: ' + evt.type)
+        }
+    }
+
+
+});</script>
+    </body>
+</html>

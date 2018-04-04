@@ -1,4 +1,4 @@
-# adata.websockets
+# adata.service
 
 ''' A basic websocket server
 
@@ -15,9 +15,28 @@ from twisted.python import log
 from twisted.internet import reactor
 from twisted.web.static import File
 from twisted.web.server import Site
+from twisted.web.resource import Resource
 from autobahn.twisted import websocket, resource
 
 from adata import echo, publish
+
+
+
+class WSGIRoot( Resource ):
+    ''' Fallback root to Flask
+    '''
+    WSGI = None
+    
+    def getChild( self, child, request ):
+        request.prepath.pop()
+        request.postpath.insert(0,child)
+        return self.WSGI
+    
+    def render( self, request ):
+        return self.WSGI.render( request )
+
+
+
 
 PORT = 8080
 
@@ -44,6 +63,10 @@ class WebSocketProtocol(websocket.WebSocketServerProtocol):
 
     @staticmethod
     def JSON(data):
+        '''
+        :returns: JSON
+        :rtype: bytes
+        '''
         return json.dumps(data, ensure_ascii = False).encode('utf8')
 
     @classmethod
@@ -51,7 +74,7 @@ class WebSocketProtocol(websocket.WebSocketServerProtocol):
         ''' Send JSON data to all connected clients
         '''
         payload = WebSocketProtocol.JSON(data)
-        data["type"] = "broadcast"
+        #data["type"] = "broadcast"
         clients = set(cls.connections)
         #echo("WebSockets: Broadcast for {} clients = {}".format(len(clients), payload))
         for conn in clients:
@@ -143,6 +166,7 @@ class WebSocketService(object):
     '''
 
     def SetTopic(self, topic):
+        self.topic = topic
         self.factory.protocol.topic = topic
 
 

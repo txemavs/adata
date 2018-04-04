@@ -5,11 +5,11 @@ Simple Websockets and pubsub example
 
 import webbrowser
 import adata
-from adata import websockets, echo, pub
+from adata import service, echo, pub
 
 
 
-class Protocol(websockets.WebSocketProtocol):
+class Protocol(service.WebSocketProtocol):
     ''' 
     Custom protocol
     Every client has one protocol instance
@@ -72,7 +72,7 @@ class Listener(object):
 
 
 
-class Service(websockets.WebSocketService):
+class Service(service.WebSocketService):
     ''' Creates the WS server
     '''
 

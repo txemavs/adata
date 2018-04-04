@@ -12,7 +12,6 @@ import adata
 from adata import echo, publish
 
 
-
        
 class Command(adata.Commands):
     __doc__ = adata.Commands.__doc__
@@ -23,21 +22,17 @@ class Command(adata.Commands):
 
 
 
-
 class Define(adata.Module):
-    
-
 
     def run(self):
 
         app = self.app
+        #echo("Autorun: Loading", marker="autorun", icon='blue_arrow')
 
-       
         # Create a interpreter and bind console input to it
         app.cmd = Command(app).Prompt(app.win.console)
 
-        #echo("Autorun: Loading", marker="autorun", icon='blue_arrow')
-
+        
         self.menuitems([
             ("File", [
                 {          
@@ -49,10 +44,13 @@ class Define(adata.Module):
         ])
 
         # Search custom modules app.Run()
+        
+        #app.load_module("flask_server")
         app.load_module("plugin.mqtt_channels")
         app.load_module("plugin.websocket_client")
         app.load_module("plugin.websocket_server")
         app.load_module("plugin.mqtt_channels_bbc")
+        app.load_module("plugin.flask_ws_server")
 
         try:
             app.run_module( "__load__" )(app)
