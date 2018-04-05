@@ -200,10 +200,11 @@
     var control = $("#control")
     
     for (i=0;i<4;i++) {
-        create_slider(control, i)
         create_switch(control, i)
     }
-
+    for (i=0;i<3;i++) {
+        create_slider(control, i)
+    }
 
 
     updateUI = function() {

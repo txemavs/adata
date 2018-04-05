@@ -603,7 +603,7 @@ div.console {
 }
 
 #output {
-    font-size: 16px;
+    font-size: 15px;
     overflow: auto;
 }
 
@@ -626,7 +626,7 @@ div.console {
 
 #cmd_line{
     color:#ff0;
-    
+        font-size: 15px;
 }
 #input {
         color:#ff0;

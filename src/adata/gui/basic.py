@@ -1,5 +1,4 @@
 # adata.gui.basic
-
 ''' 
 My WX helpers - old 2006 code - needs cleaning
 '''
