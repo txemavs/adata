@@ -8,6 +8,8 @@ Adata Automation Framework
 
 The purpose is to have a portable enviroment to quickly deploy custom python scripts anywhere, with the power of the WX Phoenix graphic user interface.
 
+![screenshot](https://github.com/txemavs/adata/blob/master/adata.png)
+
 Highlighs:
 
 * A publisher / subscriber event handling system.
