@@ -1,6 +1,11 @@
 # adata.gui.text
 ''' 
-Console emulation using scintilla
+Console emulation using scintilla.
+
+    - StyledText is a output text control
+    - Console includes a prompt
+
+TODO: Hidden time and proccess name margins
 '''
 
 from .basic import *
@@ -78,6 +83,8 @@ class StyledText(stc.StyledTextCtrl):
         
 
     def write(self, text):
+        ''' Stardard write method
+        '''
         if len(text)>80:
 
             if text[0] in ("(","[","{"):
@@ -132,19 +139,13 @@ class StyledText(stc.StyledTextCtrl):
 
 
 
-#  .o88b.  .d88b.  d8b   db .d8888.  .d88b.  db      d88888b 
-# d8P  Y8 .8P  Y8. 888o  88 88'  YP .8P  Y8. 88      88'     
-# 8P      88    88 88V8o 88 `8bo.   88    88 88      88ooooo 
-# 8b      88    88 88 V8o88   `Y8b. 88    88 88      88~~~~~ 
-# Y8b  d8 `8b  d8' 88  V888 db   8D `8b  d8' 88booo. 88.     
-#  `Y88P'  `Y88P'  VP   V8P `8888Y'  `Y88P'  Y88888P Y88888P 
 
 
 class Console(StyledText):
     '''stc.StyledTextCtrl Styled text window with an input prompt.
 
-        :param args: ``wx.stc.StyledTextCtrl``
-        :type args: parameters
+    :param args: See ``wx.stc.StyledTextCtrl``
+    :type args: parameters
 
     '''
 
@@ -388,7 +389,7 @@ class Console(StyledText):
   
 
     def Mark(self, line, icon):
-        '''Set marker 
+        '''Create a new marker 
 
         :param line: Line number
         :type line: int

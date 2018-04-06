@@ -162,8 +162,8 @@ class WebSocketProtocol(websocket.WebSocketServerProtocol):
                                                  
 
 
-class WebSocketService(object):
-    ''' Override
+class WebSocketServer(object):
+    ''' www server
     '''
 
     def SetTopic(self, topic):

@@ -38,7 +38,13 @@ class Interpreter(code.InteractiveInterpreter):
 
 class Commands(Cmd):
     '''Adata interactive interpreter: execute command, script or code.
-    
+
+    Define new commands creating do_ methods.
+
+    :param app: The main application.
+    :type app: ``adata.core.Application``
+
+    About cmd2: 
     '''
     
     __script = {}
@@ -49,9 +55,6 @@ class Commands(Cmd):
  
     def __init__(self, app):
         '''Create a cmd2 interpreter.
-
-        :param app: The main application.
-        :type app: ``adata.core.Application``
         '''
         env = {
             'app': app,
@@ -165,13 +168,14 @@ class Commands(Cmd):
 
 
     dir_parser = argparse.ArgumentParser( description='Attributes table.' )
-    dir_parser.add_argument('-f', '--filter',  nargs='?', help='Grep' ) # default='',
-    dir_parser.add_argument('something', nargs='?', help='what to inspect' )
+    dir_parser.add_argument('-f', '--filter',  nargs='?', help='Output only line matches' ) # default='',
+    dir_parser.add_argument('something', nargs='?', help='to inspect' )
     
     @with_argparser( dir_parser )
     def do_dir(self, args ):
         '''Shows all the attributes
         
+        Without argument lists /scripts folder.
         '''
         #print(args.filter)
         #source = ' '.join(args.something)
@@ -185,13 +189,12 @@ class Commands(Cmd):
 
     
     def do_module(self, name):
-        '''Load or reload a module.
+        '''Load or reload a python module.
 
         :param cmd: Module name.
         :type cmd: string
         :return: Module imported without errors
         :rtype: bool
-
         '''
         try:        
             if name in self.__module.keys():
@@ -208,7 +211,7 @@ class Commands(Cmd):
             # Clean module to reload
             return False
 
-# Add original documentation
+# Add cmd2 original documentation
 Commands.__doc__ += Cmd.__doc__      
             
             

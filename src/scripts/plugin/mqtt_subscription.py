@@ -1,5 +1,7 @@
-
-
+# adata scripts/mqtt_subscription
+'''
+Simple example MQTT 
+'''
 
 from adata import echo, Module
 from adata.mqtt import Broker
@@ -11,15 +13,13 @@ class Define(Module):
     menu = "Service"
 
     def task(self):
-        #broker = Broker("gps.gglas.com", 1883)
-        #broker.auth("glas","jmve")
         broker = ScanTopics("test.mosquitto.org", 1883)
         broker.app = self.app
         broker.subscribe("adata/#")
 
     def menuitem(self):
         return {
-            'name': "Connect MQTT - test.mosquitto.org", 
+            'name': "MQTT connection example", 
         }
 
 

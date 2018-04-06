@@ -4,6 +4,7 @@
 
 from .window.main import *
 
+
 class App(Application):
     ''' The Adata main application is a text console window.
     '''
@@ -45,13 +46,10 @@ SOFTWARE.
     win = None
 
 
-
-
     def OnPreInit(self):
         ''' Configure the application basics.
         
-            - Create the top Window 
-            
+            - Create the top Window             
             - Prepare local file database
 
         '''
@@ -120,25 +118,29 @@ SOFTWARE.
 
     
     def OnInit(self): 
-        """ Ready to go, twisted reactor manages the main loop.
-            Must return True if OK
-        """
+        '''Ready to go, twisted reactor manages the main loop.
+        
+        Must return True if OK
+        '''
         self.win.Show() 
         echo("")
-        #self.cmd = Command(self)
-        #self.cmd.Prompt(self.win.console)
+        #self.cmd = Command(self).Prompt(self.win.console)
         echo(self.info["python"])
         pub.subscribe(self.OnTask, 'app.task')
         return True 
 
         
     def OnTask(self, name="?"): 
+        '''Subscribed to app.task, shows message at status
+        '''
         self.win.Status("OnTask %s" % name, echo=False)
 
 
 
     def OnExit(self):
-        print("OnExit")
+        '''Wait if threads running and close log file.
+        '''
+        
         # Wait for threads    
         while True:
             threads = self.threads()
@@ -160,9 +162,43 @@ SOFTWARE.
 
 
     def Documentation(self, event=None):
+        '''See HTML documentation.
+        '''
         uri = "file:///"+os.path.join(self.path["www"], "documentation", "index.html")
         echo(uri)
         webbrowser.open(uri) 
+
+
+
+
+
+
+def excepthook (etype, value, tb) :
+    '''The application error handler.
+    
+    Send error details to subscribed consoles.
+
+        :param etype: Exception type
+        :type etype: type
+        :param value: Exception value
+        :type value: Exception
+        :param tb: Traceback
+        :type tb: ``traceback``
+    '''
+    echo(" %s: %s" % (value.__class__.__name__, value), "ff5555", lf=False, marker="error", icon='red_arrow')
+    echo("", icon='red_back')
+    for x in traceback.format_tb(tb):
+        if "code.py" in x: continue  
+        if "codeop.py" in x: continue  
+        if 'File "<input>"' in x: continue  
+        echo( x , "dddddd", lf=False, icon='dots')
+    where=""
+    if hasattr(value, "filename"): where += " %s" % value.filename
+    if hasattr(value, "lineno"):   where += " #%s" % value.lineno
+    if where!="": echo("%s" % where,"888888")
+
+
+
 
 
 
@@ -208,4 +244,12 @@ class Window(TopWindow):
         if mode is not None: self.sb.SetStatusText(mode, 2)
         else:
             if console: self.console.echo(text+"\n")
+
+
+
+
+
+
+
+
 

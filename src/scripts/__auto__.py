@@ -10,15 +10,29 @@ import os
 import wx
 import adata
 from adata import echo, publish
-
-
+from adata.mqtt import Broker
+from adata.cmd import argparse, with_argparser
        
 class Command(adata.Commands):
+
     __doc__ = adata.Commands.__doc__
     
+
     def do_stop(self, e):
         publish("app.stop")
+
     
+    mqtt_parser = argparse.ArgumentParser( description='Send MQTT message', add_help=False )
+    mqtt_parser.add_argument('-h', '--host',  help='Broker' ) 
+    mqtt_parser.add_argument('-t', '--topic',  help='Topic' ) 
+    mqtt_parser.add_argument('-p', '--port',  nargs='?', default=1883, help='port number' )
+    mqtt_parser.add_argument('message', help='payload' )
+    @with_argparser( mqtt_parser )
+    def do_mqtt(self, args ):
+        '''Send MQTT message
+        '''
+        broker = Broker(args.host, args.port)
+        broker.publish(args.topic, args.message)
 
 
 
@@ -36,7 +50,7 @@ class Define(adata.Module):
         self.menuitems([
             ("File", [
                 {          
-                    'name': "New", 
+                    'name': "Open", 
                     'call': app.run_explorer(app.system["FILES"]), 
                     'icon': "folder_explore.png", 
                 },
@@ -46,12 +60,10 @@ class Define(adata.Module):
         # Search custom modules app.Run()
         
         #app.load_module("flask_server")
-        app.load_module("plugin.mqtt_channels")
-        app.load_module("plugin.websocket_client")
-        app.load_module("plugin.websocket_server")
-        app.load_module("plugin.mqtt_channels_bbc")
+        app.load_module("plugin.mqtt_subscription")
         app.load_module("plugin.flask_ws_server")
-
+        app.load_module("plugin.flask_ws_client")
+        
         try:
             app.run_module( "__load__" )(app)
 

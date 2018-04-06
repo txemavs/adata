@@ -2,6 +2,8 @@
 '''
 Helpers and base class for WX applications.
 
+    - Module: a base class to allow scripts to be loaded.
+    - Application: a WX App running in a Twisted event loop
 
 '''
 import re 
@@ -17,8 +19,6 @@ import importlib
 import traceback
 import subprocess
 import webbrowser
-
-
 from wx import adv 
 from .cmd import *
 from .functions import *
@@ -26,7 +26,6 @@ from .gui import *
 from .tasks import *
 from .pubsub import *
 from .sqlite import *
-
 from twisted.internet import wxreactor
 from twisted.internet.error import ReactorAlreadyInstalledError
 try:
@@ -35,29 +34,6 @@ except ReactorAlreadyInstalledError:
     pass
 from twisted.internet import reactor
 
-
-
-def excepthook (etype, value, tb) :
-    '''The application error handler
-    
-    Send error details to subscribed consoles.
-
-    :Parameters:
-        `etype` : type
-        `value` : Exception
-        `tb` : ``traceback``
-    '''
-    echo(" %s: %s" % (value.__class__.__name__, value), "ff5555", lf=False, marker="error", icon='red_arrow')
-    echo("", icon='red_back')
-    for x in traceback.format_tb(tb):
-        if "code.py" in x: continue  
-        if "codeop.py" in x: continue  
-        if 'File "<input>"' in x: continue  
-        echo( x , "dddddd", lf=False, icon='dots')
-    where=""
-    if hasattr(value, "filename"): where += " %s" % value.filename
-    if hasattr(value, "lineno"):   where += " #%s" % value.lineno
-    if where!="": echo("%s" % where,"888888")
 
 
 
@@ -77,9 +53,8 @@ class Module(object):
     def __init__(self, app):
         '''Define the module
 
-        :parameters:
-            `app` : ``adata.core.Application``
-                The main application
+        :param app: The main application
+        :type app: ``adata.core.Application``
         '''
         self.app = app
 
@@ -98,9 +73,8 @@ class Module(object):
     def execute(self, event=None):
         '''Call the run and task methods if defined
         
-        :parameters:
-            `event` : None or ``wx.Event``
-                Optional
+        :param event: optional
+        :type event: ``wx.Event`` or None.
         '''        
         if self.run is not None: 
             if self.name is not None:
@@ -127,10 +101,8 @@ class Module(object):
 def check_module(name):
     '''Try to Import the module and show errors
 
-    :parameters:
-        `name` : string
-            Module name
-
+    :param name: Module name.
+    :type name: string 
     :return: Module imported without errors
     :rtype: bool
     '''
@@ -151,9 +123,8 @@ def check_modules(folder):
     A module should not do anything when imported.
     But a script does: try check_modules(app.path["scripts"])
 
-    :parameters:
-        `folder` : string
-            Module folder path
+    :param folder: Module folder path.
+    :type folder: string 
     '''
     errors = 0
     passed = 0
@@ -185,12 +156,7 @@ class Custom(object):
 
 
 
-#  .d8b.  d8888b. d8888b. db      d888888b  .o88b.  .d8b.  d888888b d888888b  .d88b.  d8b   db 
-# d8' `8b 88  `8D 88  `8D 88        `88'   d8P  Y8 d8' `8b `~~88~~'   `88'   .8P  Y8. 888o  88 
-# 88ooo88 88oodD' 88oodD' 88         88    8P      88ooo88    88       88    88    88 88V8o 88 
-# 88~~~88 88~~~   88~~~   88         88    8b      88~~~88    88       88    88    88 88 V8o88 
-# 88   88 88      88      88booo.   .88.   Y8b  d8 88   88    88      .88.   `8b  d8' 88  V888 
-# YP   YP 88      88      Y88888P Y888888P  `Y88P' YP   YP    YP    Y888888P  `Y88P'  VP   V8P 
+
 
 class Application(wx.App): 
     '''The minimal Adata wx application class.
@@ -296,10 +262,8 @@ class Application(wx.App):
     def ConfigParser(self, filepath):
         '''Create a Windows style ini file parser
         
-        :parameters:
-            `filepath` : string
-                File path
-
+        :param filepath: File path.
+        :type filepath: string
         :return: ConfigParser instance
         :rtype: ``configparser.ConfigParser``
         '''
@@ -310,13 +274,11 @@ class Application(wx.App):
 
     def ConfigDict(self, config, section):
         '''Read a configuration section.
-        
-        :parameters:
-            `config` : ``configparser.ConfigParser``
-                File path
-            `section` : string
-                Section [title]
 
+        :param config: File path
+        :type `config`: ``configparser.ConfigParser``
+        :param section: [Section] title
+        :type `section`: string
         :rtype: dict
         '''
         data = {}        
@@ -328,6 +290,7 @@ class Application(wx.App):
                 except: v = value
             data[name.upper()] = v
         return data
+
 
     def About(self, evt):
         '''Display the About box
@@ -366,10 +329,8 @@ class Application(wx.App):
 
         Calls the function returned by the defined call method.
 
-        :parameters:
-            `module` : string
-                Module name.
-        
+        :param module: Module name.
+        :type module: string 
         :return: 
         :rtype: ``Unknown``
 
