@@ -1,6 +1,4 @@
 ''' Example: A Flask / static files / ws server
-
-
 '''
 import os
 import wx
@@ -8,15 +6,8 @@ import webbrowser
 import jinja2
 from adata.core import Module
 from adata.pubsub import echo, pub, publish
-from adata.service import WSGIRoot, WebSocketProtocol, WebSocketService
-
-from twisted.internet import reactor
-from twisted.web.server import Site
-from twisted.web.static import File
-from twisted.web.wsgi import WSGIResource
+from adata.service import WSGIServer, WebSocketProtocol
 from flask import Flask, session, redirect, url_for, escape, request, render_template
-from autobahn.twisted.websocket import WebSocketServerFactory
-from autobahn.twisted.resource import WebSocketResource
 
 
 PORT = 8080
@@ -31,7 +22,8 @@ class Define(Module):
 
     def run(self):
         try:
-            ws = Server()
+            templates = os.path.join(self.app.path['data'], 'templates')
+            ws = Server(webapp(templates = templates ), Protocol, port=8080 )
         except Exception as error:
             if "WinError 10048" in "%s" % error: #idk better
                 echo("Websockets: Port %s is not available" % (PORT), 
@@ -44,6 +36,27 @@ class Define(Module):
                 'name': "Flask web server", 
                 'help': "Port %s" % PORT
             }
+
+
+
+
+
+class Server(WSGIServer):
+
+    def Initialize(self):
+        pub.subscribe(self.Broadcast, self.topic+".broadcast")
+        pub.subscribe(self.Receive, self.topic)
+        echo("pubsub: listening %s" % self.topic, "ff8800")
+
+    def Receive(self, data=None):
+        key = data['key']
+        number = Protocol.keys.index(key)
+        #conn = Protocol.connections[number]
+
+        echo("client.%s: " % number, "FF8800", lf=False, icon="dots")
+        echo("%s" % data['data'])
+
+
 
 
 
@@ -118,7 +131,7 @@ class Protocol(WebSocketProtocol):
 
 
 def webapp(templates):
-    '''
+    ''' Create a WSGI Flask app
     '''
 
     app = Flask("Adata")
@@ -169,83 +182,6 @@ def webapp(templates):
 
 
     return app
-
-
-
-
-
-class Server(WebSocketService):
-    ''' Creates the WS server
-    '''
-
-
-    def __init__(self, port=PORT):
-        ''' Start protocol factory and reactor
-        '''
-        #self.io_control()
-        
-        self.app = wx.GetApp()
-        ip = self.app.IP
-        self.ip = "127.0.0.1" if ip is None else ip
-        self.port = port
-        self.url = "ws://%s:%s" % (self.ip, self.port)
-
-        # Set Protocol factory
-        self.factory = WebSocketServerFactory(self.url)
-        self.factory.protocol = Protocol
-       
-        self.root = WSGIRoot()
-        self.root.WSGI = WSGIResource( 
-            reactor, 
-            reactor.getThreadPool(), 
-            webapp(templates = os.path.join(self.app.path['data'], 'templates') ) 
-        )
-        self.root.putChild(b"ws", WebSocketResource(self.factory) )
-        
-        static = File( os.path.join(self.app.path['www'], 'static') )
-        self.root.putChild(b"static", static )
-        # Only one File
-        #self.root.putChild(b"documentation", File( os.path.join(self.app.path['www'], 'documentation') ) )
-
-        self.site = Site( self.root )
-
-        # Use the existing reactor        
-        reactor.listenTCP( self.port, self.site )
-        
-        echo("Web Server: Starting at %s" % self.root)
-        echo("Websockets Server: Starting at %s" % self.url)
-        self.Logger()
-
-        topic = "ws.local"
-        self.SetTopic(topic)
-        
-
-        pub.subscribe(self.Broadcast, topic+".broadcast")
-        pub.subscribe(self.Receive, topic)
-        echo("pubsub: listening %s" % topic, "ff8800")
-
-
-    def Broadcast(self, data):
-        Protocol.Broadcast(data)
-
-
-    def Receive(self, data=None):
-        key = data['key']
-        number = Protocol.keys.index(key)
-        #conn = Protocol.connections[number]
-
-        echo("client.%s: " % number, "FF8800", lf=False, icon="dots")
-        echo("%s" % data['data'])
-
-
-
-
-
-
-
-
-
-
 
 
 

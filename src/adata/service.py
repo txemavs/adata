@@ -1,21 +1,22 @@
 # adata.service
 
-''' A basic websocket server
+''' Basic servers
 
     Define the protocol over WebSocketProtocol, 
 
-    Create an instance of WebSocketService
+    Create a Server with a protocol factory
 
 '''
-
+import wx
+import os
 import sys
 import json
-
 from twisted.python import log
 from twisted.internet import reactor
 from twisted.web.static import File
 from twisted.web.server import Site
 from twisted.web.resource import Resource
+from twisted.web.wsgi import WSGIResource
 from autobahn.twisted import websocket, resource
 
 from adata import echo, publish
@@ -207,22 +208,66 @@ class WebSocketService(object):
     def Logger(self):
         log.startLogging(sys.stdout)
 
+
+
+
+
+
+class WSGIServer(object):
+    ''' Creates the WS server
+    '''
+
+    def __init__(self, wsgiapp,  wsprotocol, port=PORT):
+        ''' Start protocol factory and reactor
+        '''
+        self.app = wx.GetApp()
+        ip = self.app.IP
+        self.ip = "127.0.0.1" if ip is None else ip
+        self.port = port
+        self.url = "ws://%s:%s" % (self.ip, self.port)
+
+        # Set Protocol factory
+        self.factory = websocket.WebSocketServerFactory(self.url)
+        self.factory.protocol = wsprotocol
+       
+        self.root = WSGIRoot()
+        self.root.WSGI = WSGIResource( 
+            reactor, 
+            reactor.getThreadPool(), 
+            wsgiapp 
+        )
+        self.root.putChild(b"ws", resource.WebSocketResource(self.factory) )
+        
+        static = File( os.path.join(self.app.path['www'], 'static') )
+        self.root.putChild(b"static", static )
+        # Only one File
+        #self.root.putChild(b"documentation", File( os.path.join(self.app.path['www'], 'documentation') ) )
+
+        self.site = Site( self.root )
+
+        # Use the existing reactor        
+        reactor.listenTCP( self.port, self.site )
+        
+        echo("Web Server: Starting at %s" % self.root)
+        echo("Websockets Server: Starting at %s" % self.url)
+        
+        topic = "ws.local"
+        self.topic = topic
+        self.factory.protocol.topic = topic
+        self.Initialize()    
+
+    def Initialize(self): pass
+
+
+
+    def Broadcast(self, data):
+        Protocol.Broadcast(data)
+
+
+
+
         
 def htmlchars(text): 
     return text.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
 # -----------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

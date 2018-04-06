@@ -72,7 +72,7 @@ class Listener(object):
 
 
 
-class Service(service.WebSocketService):
+class Service(service.WebSocketServer):
     ''' Creates the WS server
     '''
 
