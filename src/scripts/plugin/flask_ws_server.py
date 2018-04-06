@@ -32,9 +32,22 @@ class Define(Module):
                 raise error
 
     def menuitem(self):
+
+        # Add another menuitem before
+        self.app.win.AddMenu(self.menu, {
+            'name': "Flask web server", 
+            'help': "Port %s" % PORT,
+            'call': self.call(),
+        })
+
+        try: 
+            ip = self.app.IP
+        except: 
+            ip = "127.0.0.1"
+
         return {
-                'name': "Flask web server", 
-                'help': "Port %s" % PORT
+            'name': "Flask web client", 
+            'call': lambda e: webbrowser.open("http://%s:%s/remote" % (ip, PORT)),
             }
 
 

@@ -4,6 +4,9 @@
 
 from .window.main import *
 
+import jinja2
+import flask
+
 
 class App(Application):
     ''' The Adata main application is a text console window.
@@ -169,33 +172,6 @@ SOFTWARE.
         webbrowser.open(uri) 
 
 
-
-
-
-
-def excepthook (etype, value, tb) :
-    '''The application error handler.
-    
-    Send error details to subscribed consoles.
-
-        :param etype: Exception type
-        :type etype: type
-        :param value: Exception value
-        :type value: Exception
-        :param tb: Traceback
-        :type tb: ``traceback``
-    '''
-    echo(" %s: %s" % (value.__class__.__name__, value), "ff5555", lf=False, marker="error", icon='red_arrow')
-    echo("", icon='red_back')
-    for x in traceback.format_tb(tb):
-        if "code.py" in x: continue  
-        if "codeop.py" in x: continue  
-        if 'File "<input>"' in x: continue  
-        echo( x , "dddddd", lf=False, icon='dots')
-    where=""
-    if hasattr(value, "filename"): where += " %s" % value.filename
-    if hasattr(value, "lineno"):   where += " #%s" % value.lineno
-    if where!="": echo("%s" % where,"888888")
 
 
 

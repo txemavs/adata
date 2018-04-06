@@ -62,7 +62,6 @@ class Define(adata.Module):
         #app.load_module("flask_server")
         app.load_module("plugin.mqtt_subscription")
         app.load_module("plugin.flask_ws_server")
-        app.load_module("plugin.flask_ws_client")
         
         try:
             app.run_module( "__load__" )(app)

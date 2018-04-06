@@ -34,6 +34,12 @@ if __name__=='__main__':
     # nicoddemus workaround
     distutils_path = os.path.join(os.path.dirname(opcode.__file__), 'distutils')
 
+    # jinja2 needs asyncio who needs tk and makes me do all this!
+    envpath = os.path.dirname(os.path.dirname(sys.executable))
+    os.environ['TCL_LIBRARY'] = os.path.join( envpath, 'tcl', 'tcl8.6')
+    os.environ['TK_LIBRARY'] = os.path.join( envpath, 'tcl', 'tk8.6')
+
+            
     setup(
         name = 'Adata',
         version = '0.0.1',
@@ -58,8 +64,12 @@ if __name__=='__main__':
                 ],
                 'packages': [
                     'adata',
+                    'asyncio',
                     'appdirs',
                     'bigchaindb_driver',
+                    'flask',
+                    'jinja2',
+                    'jinja2.ext',
                     'matplotlib',
                     'numpy',
                     'requests',
@@ -79,7 +89,9 @@ if __name__=='__main__':
                     'scripts/',
                     'README.txt',
                     'config.ini',
-                    (distutils_path, 'lib/distutils')
+                    (distutils_path, 'lib/distutils'),
+                    (os.path.join( envpath, 'DLLs', 'tcl86t.dll'), 'tcl86t.dll'),
+                    (os.path.join( envpath, 'DLLs', 'tk86t.dll'), 'tk86t.dll')
                 ]
             }
         }, 
