@@ -6,6 +6,7 @@ import zipfile
 import datetime
 import xml.etree.ElementTree as etree
 
+import _mssql
 
 
 def binary(i):
@@ -33,19 +34,6 @@ def xml_code(node, cmd=False):
 
 
 
-def strtime(tt):
-    if tt is None: tt=0
-    mm=int(tt//(60))
-    tt=tt-mm*60
-    ss=int(tt)
-    tt=tt-ss
-    cc=int(tt*100)
-    #ff=int(tt*25)*4
-    return str(mm).zfill(2)+"-"+str(ss).zfill(2)+"-"+str(cc).zfill(2)
-
-
-#def timestamp():
-#    return datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
 
 
 def timestamp(timer=None):

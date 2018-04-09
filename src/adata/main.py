@@ -4,8 +4,8 @@
 
 from .window.main import *
 
-import jinja2
 import flask
+import jinja2
 
 
 class App(Application):
@@ -19,10 +19,7 @@ class App(Application):
     
     Developer = "Txema Vicente Segura <txema@nabla.net>"
     
-    Description = '''
-A portable IFTTT event handling framework to run your python scripts.
-
-Twisted Internet Reactor + WX Python application.'''
+    Description = '''Another portable IFTTT event handling framework to run your python scripts.'''
     
     License = '''
 MIT License
@@ -129,10 +126,19 @@ SOFTWARE.
         echo("")
         #self.cmd = Command(self).Prompt(self.win.console)
         echo(self.info["python"])
+        pub.subscribe(self.OnStatus, 'app.status')
         pub.subscribe(self.OnTask, 'app.task')
         return True 
 
-        
+       
+
+    def OnStatus(self, text="?"): 
+        '''Subscribed to app.status, shows message at bottom status bar
+        '''
+        self.win.Status(text)
+
+
+ 
     def OnTask(self, name="?"): 
         '''Subscribed to app.task, shows message at status
         '''
@@ -204,7 +210,7 @@ class Window(TopWindow):
         """ Stop all threads before exit
         """
 
-        if len(self.app.threads())>1:
+        if len(threading.enumerate())>1:
             if event and event.CanVeto(): 
                 event.Veto()
             echo("Closing...", marker="OnClose", icon="red_circle")

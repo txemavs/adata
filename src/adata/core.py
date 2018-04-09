@@ -17,6 +17,7 @@ import threading
 import configparser
 import importlib
 import traceback
+import twisted
 import subprocess
 import webbrowser
 from wx import adv 
@@ -83,7 +84,7 @@ class Module(object):
 
         if self.task is not None:
             def task(): self.task()
-            Task(self, task, name=self.name)
+            Task(self.app, task, name=self.name)
     
 
     def menuitems(self, menu):
@@ -303,7 +304,8 @@ class Application(wx.App):
                 
         x = '\n'.join([
             self.info["python"],
-            "WX Phoenix "+self.info["wx"]+"\n",
+            "Twisted Internet " + twisted.version.short(),
+            "User Interface: WX Phoenix " + self.info["wx"] + "\n",
             "- "*80,
             "\n",
         ])
@@ -320,7 +322,14 @@ class Application(wx.App):
     def threads(self):
         '''Get all runing threads.
         '''
-        return threading.enumerate()
+        threads = threading.enumerate()
+        for thread in threads:
+            if hasattr(thread, "app") and thread.app==self.app:
+                color="00ff00"
+            else:
+                color="ff8800"
+            echo("%s <%s>" % (thread.getName(), thread.__class__.__name__), color=color )
+        return threads
 
 
         

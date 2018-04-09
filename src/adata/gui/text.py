@@ -136,6 +136,49 @@ class StyledText(stc.StyledTextCtrl):
         
 
 
+    
+class TextEditor(StyledText):
+    
+
+    def __init__(self, *args, **kwargs):
+        '''Initialize stc.StyledTextCtrl and set marker and style specs.
+
+        See stc.StyledTextCtrl documentation.
+        '''
+        StyledText.__init__(self, *args, **kwargs)
+
+        self.SetUseTabs(True)
+        self.SetTabWidth(4)
+        self.SetViewWhiteSpace(False)
+        
+        self.SetLineNumbers(True)
+        self.StyleSetSpec(stc.STC_STYLE_LINENUMBER, "fore:#000000")
+
+        self.SetLexer(stc.STC_LEX_PYTHON)
+        self.SetKeyWords(0, ' '.join(keyword.kwlist))
+
+        try:
+            self.SetEndAtLastLine(False)
+        except AttributeError:
+            pass
+    
+
+        #self.Bind(stc.EVT_STC_UPDATEUI, self.OnUpdateUI)
+
+
+
+    def SetLineNumbers(self, state):
+        self.lineNumbers = state
+        if state:
+            self.SetMarginType(1, stc.STC_MARGIN_NUMBER)
+            self.SetMarginWidth(1, 40)
+        else:
+            # Leave a small margin so the feature hidden lines marker can be seen
+            self.SetMarginType(1, 0)
+            self.SetMarginWidth(1, 10)
+        
+
+
 
 
 
