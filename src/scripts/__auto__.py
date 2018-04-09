@@ -10,16 +10,34 @@ import os
 import wx
 import adata
 from adata import echo, publish
+from adata.pubsub import pub
 from adata.mqtt import Broker
 from adata.cmd import argparse, with_argparser
-       
+
+
+
 class Command(adata.Commands):
+
 
     __doc__ = adata.Commands.__doc__
     
 
     def do_stop(self, e):
-        publish("app.stop")
+        '''Stop a running task
+
+        TODO: Choose one
+        '''
+
+        if not 'app.stop' in pub.topicsMap.keys(): return
+        topic = pub.topicsMap['app.stop']
+
+        for subtopic in topic.getSubtopics():
+            echo(subtopic)
+            for listener in subtopic.getListeners():
+                handler = listener.getCallable()
+                echo('\t%s' % handler)
+            publish( subtopic.getName() )
+        echo('')
 
     
     mqtt_parser = argparse.ArgumentParser( description='Send MQTT message', add_help=False )
@@ -45,6 +63,8 @@ class Define(adata.Module):
 
         # Create a interpreter and bind console input to it
         app.cmd = Command(app).Prompt(app.win.console)
+
+
 
         
         self.menuitems([
@@ -104,7 +124,6 @@ class Define(adata.Module):
             ])
         ])
 
-       
-        
-
-
+        publish("app.status", text="OK")
+        echo("Type 'help' for commands")
+        #app.cmd.runcmds_plus_hooks(['help'])

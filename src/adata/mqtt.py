@@ -109,7 +109,7 @@ class Broker(object):
         
         echo("Connecting to MQTT server...", "88aaff")
         self.connect(on_connect, on_message)
-        pub.subscribe(self.StopHandler, "app.stop")
+        pub.subscribe(self.StopHandler, "app.stop.mqtt")
         self.client.loop_start()
         self.running = True
         while self.running:

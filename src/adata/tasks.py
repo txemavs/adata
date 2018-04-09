@@ -45,9 +45,10 @@ class Task(threading.Thread):
         self.task = task
         self.name = name
         echo(
-            "Task %s starts..." % self.name, 
+            "Task %s starts ..." % (self.name), 
             "8888ff", 
             marker = self.name, icon = 'blue_arrow')
+        self.stop = False
         self.start()
 
 

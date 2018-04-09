@@ -305,7 +305,6 @@ class TopWindow(wx.Frame):
 
 
 
-
 # .d8888. d888888b  .d8b.  d888888b db    db .d8888. d8888b.  .d8b.  d8888b. 
 # 88'  YP `~~88~~' d8' `8b `~~88~~' 88    88 88'  YP 88  `8D d8' `8b 88  `8D 
 # `8bo.      88    88ooo88    88    88    88 `8bo.   88oooY' 88ooo88 88oobY' 
@@ -332,13 +331,13 @@ class StatusBar(wx.StatusBar):
 
 
     def Refresh(self, format="%s %s %s"):
- 
-        
+
         t = time.localtime(time.time())
         self.SetStatusText(time.strftime("%B %d %A %H:%M", t), 1)
         
+        threads = threading.enumerate()
         self.SetStatusText("%s Threads - Line %s/%s" % (
-            len(self.app.threads()),
+            len(threads),
             self.win.console.GetCurrentLine(),
             self.win.console.GetLineCount()-1
         ), 2)
