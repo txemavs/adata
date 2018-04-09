@@ -16,6 +16,7 @@ import html2text
 import importlib
 import argparse
 from .pubsub import *
+from .window import *
 from lxml import html
 from cmd2 import Cmd, with_argparser
 from prettytable import PrettyTable
@@ -84,8 +85,8 @@ class Commands(Cmd):
                     self.app.win.console.echo(line, #or pubsub echo 
                         #color="ffffff", 
                         style="fore:f5f5f5", 
-                        marker="cmd_last" if first else None, 
-                        icon='blue_arrow' if first else 'dots'
+                    #    marker="cmd_last" if first else None, 
+                    #    icon='blue_arrow' if first else 'dots'
                     )
                     first=False
                 #if not msg_str.endswith(end): echo(end)
@@ -177,17 +178,16 @@ class Commands(Cmd):
         
         Without argument lists /scripts folder.
         '''
-        #print(args.filter)
-        #source = ' '.join(args.something)
         source = args.something
-
-        if args.something:
+        if source:
             self.code.runsource('dir_pretty(%s)' % source )
         else:
             print( '\n'.join( self.iter_scripts() ))
             
 
     
+
+
     def do_module(self, name):
         '''Load or reload a python module.
 
@@ -211,6 +211,27 @@ class Commands(Cmd):
             # Clean module to reload
             return False
 
+
+
+    def do_edit(self, name):
+        '''Open a text file
+        '''
+        fullname = self.app.win.FileDialog('Open text file', wildcard='*.*')
+        if fullname is None: return
+        TextWindow(fullname)
+
+
+    browse_parser = argparse.ArgumentParser()
+    browse_parser.add_argument('url', help='URL' )
+    def do_browse(self, args):
+        '''Open a browser window
+        '''
+        for url in args.split(' '):
+            win = Browser(self.app.win)
+            win.Go(url)
+
+
+
 # Add cmd2 original documentation
 Commands.__doc__ += Cmd.__doc__      
             
@@ -229,11 +250,14 @@ def visit(url):
             name = meta.get("property")
         print(" -- %s -> %s" % (name, meta.get("content")))
 
+
+
 def read_file(path, encoding="utf-8"):
     ''' Prints a text file
     '''
     with open(path, "rt", encoding=encoding) as f: 
         print(f.read())
+
 
 
 def dir_pretty(var, grep=None):
