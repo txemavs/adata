@@ -2,7 +2,7 @@ Run Adata
 ---------
 
 Install python > 3 and virtual enviroments:
-  pip install virtuelenv virtualenvwrapper virtualenvwrapper-win
+  pip install virtualenv virtualenvwrapper virtualenvwrapper-win
 
 You can set WORKON_HOME enviroment to your Env path, and then create a new Env:
   mkvirtualenv --python=C:\Python36-64\python.exe adata
