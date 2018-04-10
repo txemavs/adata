@@ -46,25 +46,29 @@ class StyledText(stc.StyledTextCtrl):
     _style_cache = [None]
 
 
-
-    def echo(self, text=None, style=None, lf=True, marker=None, icon=None):
-        ''' The print method
+    def index_style(self, style):
+        ''' Append to style cache if necesary and returns the index.
         '''
         if not style in self._style_cache:
             self._style_cache.append(style)
             self.StyleSetSpec(len(self._style_cache)-1, style)
+        return self._style_cache.index(style)
 
+
+    def echo(self, text=None, style=None, lf=True, marker=None, icon=None):
+        ''' The print method
+        '''
+        
         if text is None: text=""
 
         line = self.MarkerLineFromHandle(self.marker["prompt"])-1
         pos = self.GetLineEndPosition(line)
-
         self.InsertText(pos, '%s%s' % (text,'\n' if lf else '') )
 
         if style is not None:
             length = len(text)
             self.StartStyling(pos=pos, mask=0xFF)
-            self.SetStyling(length=length, style=self._style_cache.index(style))
+            self.SetStyling(length=length, style=self.index_style(style))
 
         mark = None        
         if icon is not None:
@@ -225,6 +229,11 @@ class Console(StyledText):
             self.prompt = ">>> "
 
         self.AddText(self.prompt)
+
+        length = len(self.prompt)
+        self.StartStyling(pos=0, mask=0xFF)
+        self.SetStyling(length=length, style=self.index_style("fore:#00ff00,bold"))
+
         self.marker["prompt"] = self.MarkerAdd(1, self.mark_number["prompt"])
         self.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
 
