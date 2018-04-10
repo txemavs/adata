@@ -40,7 +40,6 @@ Modules
    adata.gui
    adata.gui.text
    adata.tasks
-   adata.websockets
    tests
    build
    

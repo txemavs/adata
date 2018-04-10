@@ -8,6 +8,7 @@ from mock import Mock
 sys.modules['wx'] = Mock()
 sys.modules['wx.adv'] = Mock()
 sys.modules['wx.stc'] = Mock()
+sys.modules['wx.html2'] = Mock()
 sys.modules['wx.lib'] = Mock()
 sys.modules['wx.lib.buttons'] = Mock()
 sys.modules['wx.lib.pubsub'] = Mock()
@@ -15,7 +16,7 @@ sys.modules['wx.lib.masked'] = Mock()
 sys.modules['wx.lib.wordwrap'] = Mock()
 
 import wx
-from wx import adv, stc
+from wx import adv, stc, html2
 
 class WX: pass
 wx.App = WX
