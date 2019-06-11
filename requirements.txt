@@ -39,7 +39,7 @@ six==1.11.0
 snowballstemmer==1.2.1
 Sphinx==1.7.2
 sphinxcontrib-websupport==1.0.1
-Twisted==17.9.0
+Twisted==19.2.1
 txaio==2.9.0
 urllib3==1.22
 zope.interface==4.4.3
